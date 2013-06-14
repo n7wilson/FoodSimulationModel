@@ -11,7 +11,7 @@ import repast.simphony.relogo.UtilityG;
 
 class Consumer extends Person {
 	
-	def status = "working"
+	def status = "hungry"
 	def generator = new Random()
 	def store = null
 	def origin = null

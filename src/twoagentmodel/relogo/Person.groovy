@@ -72,11 +72,14 @@ class Person extends BaseTurtle {
 		this.energy += energy;
 		seller.addMoney(cost);
 		inventory.remove(item);
+		inventory.add(new Food())
 		
 		seller.label = "Last item sold: Food -> cost = " + cost + " energy = " + energy
 	}
 	
 	public Food chooseItem(List<Food> inventory){
+		long seed = System.nanoTime();
+		Collections.shuffle(inventory, new Random(seed));
 		Food item = inventory.get(0)
 		for(int i = 0; i < 10; i++){
 			def nextitem = inventory.get(i)

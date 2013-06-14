@@ -21,6 +21,6 @@ class Food extends BaseTurtle {
 		NormalDistribution moneyrandom = new NormalDistribution(10, 3);
 		NormalDistribution energyrandom = new NormalDistribution(300, 30);
 		energy = (int) energyrandom.sample();
-		money = moneyrandom.sample();
+		money = ceiling(100 * moneyrandom.sample())/100;
 	}
 }
