@@ -12,11 +12,8 @@ import repast.simphony.relogo.UtilityG;
 
 //base class for all People agents
 class Person extends BaseTurtle {
-	//current energy of the agent, scale from 1-100
+	//current energy of the agent
 	private int energy;
-	//current available funds of the agent
-	private int money;
-	
 	//modifier for the agents energy, don't want to be able to set it outright
 	public void addEnergy(int energy){
 		this.energy += energy;
@@ -26,26 +23,44 @@ class Person extends BaseTurtle {
 		return this.energy;
 	}
 	
+	//current available funds of the agent
+	private double money;
 	//modifier for the agents energy, similar to energy
-	public void addMoney(int moeny){
+	public void addMoney(double moeny){
 		this.money += money;
 	}
 	//returns an agents energy
-	public int getMoney(){
+	public double getMoney(){
 		return this.money;
+	}
+	
+	//time that the agent spends each day working, read only value
+	private int workHours;
+	public int getWorkHours(){
+		return this.workHours;
+	}
+	//time that the agent has left to work for this day
+	private int workHoursLeft;
+	public int getWorkHoursLeft(){
+		return this.workHoursLeft;
+	}
+	public void setWorkHoursLeft(int hours){
+		this.workHoursLeft = hours
 	}
 	
 	//default constructor
 	public Person(){
-		energy = 100;
+		energy = 1000;
 		money = 9999999;
+		workHours = 20;
+		workHoursLeft = workHours;
 	}
 	
 	
 	public void buy(Person seller, List<Food> inventory){
-		Food item = inventory.get(0)
+		Food item = chooseItem(inventory)
 		
-		int cost = item.money;
+		double cost = item.money;
 		int energy = item.energy;
 		
 		if(cost > this.money){
@@ -57,5 +72,22 @@ class Person extends BaseTurtle {
 		this.energy += energy;
 		seller.addMoney(cost);
 		inventory.remove(item);
+		
+		seller.label = "Last item sold: Food -> cost = " + cost + " energy = " + energy
+	}
+	
+	public Food chooseItem(List<Food> inventory){
+		Food item = inventory.get(0)
+		for(int i = 0; i < 10; i++){
+			def nextitem = inventory.get(i)
+			if(nextitem.money < item.money){
+				item = nextitem;
+			}
+		}
+		return item;
+	}
+	
+	public void nextDay(){
+		this.workHoursLeft += this.workHours;
 	}
 }

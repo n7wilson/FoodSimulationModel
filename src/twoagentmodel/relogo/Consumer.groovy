@@ -11,45 +11,81 @@ import repast.simphony.relogo.UtilityG;
 
 class Consumer extends Person {
 	
-	def hungry = true
+	def status = "working"
 	def generator = new Random()
 	def store = null
 	def origin = null
-	def hungerMin = 50 - hungerTime
+	def work = null
+	def hungerMin = 500 - hungerTime
+	def salary = 30
 
+	def setStore(){
+		store = minOneOf(retailers()){this.distance(it)}
+	}
+	
+	def setOrigin(){
+		origin = patchHere()
+	}
+	
+	def setWork(){
+		work = work(0)
+	}
+	
 	
 	def step(){
 		this.addEnergy(-1)
 		label = this.getEnergy()
-		if(store == null){
-			store = retailers().get(generator.nextInt(retailers().size()))
-		}
-		if(origin == null){
-			origin = patchHere()
-		}
-		if(hungry){
+		if(status == "hungry"){
 			//label = "Hungry!";
-			if(distance(store) > 0.25){
-				face(store)
-				forward(0.25) 
+			if(notAtLocation(store)){
+				moveTowards(store) 
 			}
 			else{
-				hungry = false
+				status = "normal"
 				this.buy(store, store.inventory)
 			}
 		}
+		else if(status == "working"){
+			if(notAtLocation(work)){
+				moveTowards(work)
+			}
+			else{
+				workHoursLeft--
+				if(workHoursLeft <= 0){
+					status = "normal"
+				}
+				label = "working, energy: " + this.getEnergy()
+				this.addMoney(salary)
+				if(this.getEnergy() < hungerMin){
+					status = "hungry"
+					store = minOneOf(retailers()){this.distance(it)}
+				}
+			}
+		}
 		else{
-			//label = "...";
+			label = "...";
 			if(distance(origin) > 0.25){
 				face(origin)
 				forward(0.25)
 			}
 			else{
 				if(this.getEnergy() < hungerMin){
-					hungry = true
-					store = minOneOf(retailers()){distance(it)}
+					status = "hungry"
+					store = minOneOf(retailers()){this.distance(it)}
+				}
+				else if(workHoursLeft > 0){
+					status = "working"
 				}
 			}
 		}
+	}
+	
+	def notAtLocation(BaseTurtle agent){
+		return distance(agent) > 0.25
+	}
+	
+	def moveTowards(BaseTurtle agent){
+		face(agent)
+		forward(0.25)
 	}
 }
