@@ -16,7 +16,7 @@ class Consumer extends Person {
 	def store = null
 	def origin = null
 	def work = null
-	def hungerMin = 500 - hungerTime
+	def hungerMin = 500
 	def salary = 30
 
 	def setStore(){
@@ -35,6 +35,15 @@ class Consumer extends Person {
 	def step(){
 		this.addEnergy(-1)
 		label = this.getEnergy()
+		if(this.getEnergy() < hungerMin){
+			status = "hungry"
+			store = minOneOf(retailers()){this.distance(it)}
+		}
+		else if(workHoursLeft > 0){
+			status = "working"
+		}
+		
+		
 		if(status == "hungry"){
 			//label = "Hungry!";
 			if(notAtLocation(store)){
@@ -64,28 +73,19 @@ class Consumer extends Person {
 		}
 		else{
 			label = "...";
-			if(distance(origin) > 0.25){
+			if(distance(origin) > 0.5){
 				face(origin)
-				forward(0.25)
-			}
-			else{
-				if(this.getEnergy() < hungerMin){
-					status = "hungry"
-					store = minOneOf(retailers()){this.distance(it)}
-				}
-				else if(workHoursLeft > 0){
-					status = "working"
-				}
+				forward(0.5)
 			}
 		}
 	}
 	
 	def notAtLocation(BaseTurtle agent){
-		return distance(agent) > 0.25
+		return distance(agent) > 0.5
 	}
 	
 	def moveTowards(BaseTurtle agent){
 		face(agent)
-		forward(0.25)
+		forward(0.5)
 	}
 }

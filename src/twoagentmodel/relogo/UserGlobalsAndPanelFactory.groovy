@@ -36,6 +36,8 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
 		
 		addSliderWL("numRetailers", "Number of Retailers", 1,1,20,5)
 		addSliderWL("numConsumers", "Number of Consumers",1,1,50,10)
-		addSliderWL("hungerTime", "Time to Become Hungry",1,1,100,10)
+		addSliderWL("avgCost", "Average Food Cost",1,1,100,10)
+		addSliderWL("avgEng", "Average Food Energy",100,5,2000,300)
+		addSliderWL("timeInterval", "Time Interval",1,1,100,35)
 	}
 }

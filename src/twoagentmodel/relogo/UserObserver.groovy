@@ -87,8 +87,8 @@ class UserObserver extends BaseObserver{
 		ask(consumers()){
 			step()
 		}
-		sleep(50);
-		if(tick > 60){
+		sleep(timeInterval);
+		if(tick > 720){
 			tick = 0
 			ask(persons()){
 				nextDay()

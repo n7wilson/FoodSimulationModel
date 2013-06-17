@@ -52,7 +52,7 @@ class Person extends BaseTurtle {
 	public Person(){
 		energy = 1000;
 		money = 9999999;
-		workHours = 20;
+		workHours = 240;
 		workHoursLeft = workHours;
 	}
 	

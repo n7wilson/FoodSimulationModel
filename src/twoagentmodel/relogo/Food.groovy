@@ -18,8 +18,8 @@ class Food extends BaseTurtle {
 	
 	//default constructor
 	public Food(){
-		NormalDistribution moneyrandom = new NormalDistribution(10, 3);
-		NormalDistribution energyrandom = new NormalDistribution(300, 30);
+		NormalDistribution moneyrandom = new NormalDistribution(avgCost, 3);
+		NormalDistribution energyrandom = new NormalDistribution(avgEng, 30);
 		energy = (int) energyrandom.sample();
 		money = ceiling(100 * moneyrandom.sample())/100;
 	}
