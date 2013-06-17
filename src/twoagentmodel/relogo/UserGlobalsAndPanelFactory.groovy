@@ -31,6 +31,8 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
 		addButtonWL("setup", "Setup")
 		addButtonWL("go","Go Once")
 		addToggleButtonWL("go", "Go")
+		addButtonWL("addConsumer", "+1 Consumer")
+		addButtonWL("Update", "Update")
 		
 		addSliderWL("numRetailers", "Number of Retailers", 1,1,20,5)
 		addSliderWL("numConsumers", "Number of Consumers",1,1,50,10)
