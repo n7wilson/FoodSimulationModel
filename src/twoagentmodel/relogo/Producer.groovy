@@ -9,11 +9,15 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 
-class Retailer extends Person {
+class Producer extends Person {
 	
-	public Retailer(){
-		for(int i = 0; i < 1000; i++){
+	public Producer(){
+		for(int i = 0; i < 500; i++){
 			food.add(new Food())
 		}
+	}
+	
+	def work(){
+		food.add(new Food())
 	}
 }

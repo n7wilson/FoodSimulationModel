@@ -2,6 +2,9 @@ package twoagentmodel.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
+
+import java.util.List;
+
 import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.BaseTurtle;
 import repast.simphony.relogo.Plural;
@@ -45,13 +48,17 @@ class Consumer extends Person {
 		
 		
 		if(status == "hungry"){
-			//label = "Hungry!";
-			if(notAtLocation(store)){
-				moveTowards(store) 
+			if(food.empty){
+				if(notAtLocation(store)){
+					moveTowards(store) 
+				}
+				else{
+					this.buy(store)
+				}
 			}
 			else{
+				eat()
 				status = "normal"
-				this.buy(store, store.inventory)
 			}
 		}
 		else if(status == "working"){
@@ -65,14 +72,9 @@ class Consumer extends Person {
 				}
 				label = "working, energy: " + this.getEnergy()
 				this.addMoney(salary)
-				if(this.getEnergy() < hungerMin){
-					status = "hungry"
-					store = minOneOf(retailers()){this.distance(it)}
-				}
 			}
 		}
 		else{
-			label = "...";
 			if(distance(origin) > 0.5){
 				face(origin)
 				forward(0.5)

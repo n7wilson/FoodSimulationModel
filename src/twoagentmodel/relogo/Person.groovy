@@ -13,7 +13,7 @@ import repast.simphony.relogo.UtilityG;
 //base class for all People agents
 class Person extends BaseTurtle {
 	//current energy of the agent
-	private int energy;
+	protected int energy;
 	//modifier for the agents energy, don't want to be able to set it outright
 	public void addEnergy(int energy){
 		this.energy += energy;
@@ -24,9 +24,9 @@ class Person extends BaseTurtle {
 	}
 	
 	//current available funds of the agent
-	private double money;
+	protected double money;
 	//modifier for the agents energy, similar to energy
-	public void addMoney(double moeny){
+	public void addMoney(double money){
 		this.money += money;
 	}
 	//returns an agents energy
@@ -34,13 +34,13 @@ class Person extends BaseTurtle {
 		return this.money;
 	}
 	
-	//time that the agent spends each day working, read only value
-	private int workHours;
+	//time that the agent spends each day working
+	protected int workHours;
 	public int getWorkHours(){
 		return this.workHours;
 	}
 	//time that the agent has left to work for this day
-	private int workHoursLeft;
+	protected int workHoursLeft;
 	public int getWorkHoursLeft(){
 		return this.workHoursLeft;
 	}
@@ -48,8 +48,12 @@ class Person extends BaseTurtle {
 		this.workHoursLeft = hours
 	}
 	
+	//food that the agent is carrying
+	public List<Food> food;
+	
 	//default constructor
 	public Person(){
+		food = new ArrayList<Food>()
 		energy = 1000;
 		money = 9999999;
 		workHours = 240;
@@ -57,8 +61,8 @@ class Person extends BaseTurtle {
 	}
 	
 	
-	public void buy(Person seller, List<Food> inventory){
-		Food item = chooseItem(inventory)
+	public void buy(Person seller){
+		Food item = chooseItem(seller.food)
 		
 		double cost = item.money;
 		int energy = item.energy;
@@ -68,20 +72,27 @@ class Person extends BaseTurtle {
 			return
 		}
 		
-		this.money -= cost;
-		this.energy += energy;
+		this.addMoney(-cost)
 		seller.addMoney(cost);
-		inventory.remove(item);
-		inventory.add(new Food())
-		
+		this.food.add(item);
+		seller.food.remove(item);
+		if(seller.getClass().equals(Retailer.class) || seller.getClass().equals(Producer.class))
 		seller.label = "Last item sold: Food -> cost = " + cost + " energy = " + energy
+		
+	}
+	
+	public void eat(){
+		Food item = food.get(0)
+		this.addEnergy(item.energy)
+		food.remove(item)
 	}
 	
 	public Food chooseItem(List<Food> inventory){
 		long seed = System.nanoTime();
 		Collections.shuffle(inventory, new Random(seed));
 		Food item = inventory.get(0)
-		for(int i = 0; i < 10; i++){
+		int numItems = Math.min(10, inventory.size())
+		for(int i = 0; i < numItems; i++){
 			def nextitem = inventory.get(i)
 			if(nextitem.money < item.money){
 				item = nextitem;

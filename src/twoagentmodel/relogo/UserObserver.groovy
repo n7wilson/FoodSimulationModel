@@ -24,14 +24,18 @@ class UserObserver extends BaseObserver{
 		setDefaultShape(Consumer, "person")
 		createConsumers(numConsumers){
 			setxy(randomXcor(), randomYcor())
-		}
-		createConsumers(1){
-			setxy(randomXcor(), randomYcor())
-		}
-		ask(consumers()){
 			setStore()
 			setWork()
 			setOrigin()
+		}
+		setDefaultShape(Producer, "farm")
+		createProducers(10){
+			setxy(randomXcor(), randomYcor())
+		}
+		setDefaultShape(Distributor, "truck")
+		createDistributors(10){
+			setxy(randomXcor(), randomYcor())
+			getDestination()
 		}
 	}
 	
@@ -86,6 +90,12 @@ class UserObserver extends BaseObserver{
 		tick++
 		ask(consumers()){
 			step()
+		}
+		ask(distributors()){
+			step()
+		}
+		ask(producers()){
+			work()
 		}
 		sleep(timeInterval);
 		if(tick > 720){
