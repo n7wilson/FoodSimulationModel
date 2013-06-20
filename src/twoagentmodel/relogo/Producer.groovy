@@ -45,10 +45,20 @@ class Producer extends Person {
 			case "planting": 
 				planted.add(new Food())
 				break
+			case "maintaining":
+				for(Food plant: planted){
+					if(!plant.fertilized){
+						plant.fertilized = true
+						break
+					}
+				}
 		}
 		if(!dest.empty){
 			status = "loading"
 			label = "loading"
+		}
+		else if(planted.size > 10){
+			setJob("maintaining")
 		}
 		else if(ready.empty){
 			setJob("planting")
@@ -74,6 +84,10 @@ class Producer extends Person {
 	def growPlants(){
 		def toRemove = new ArrayList<Food>()
 		for(Food plant: planted){
+			if(plant.fertilized){
+				plant.gTime--
+				plant.fertilized = false
+			}
 			plant.gTime--
 			if(plant.gTime <= 0){
 				ready.add(plant)

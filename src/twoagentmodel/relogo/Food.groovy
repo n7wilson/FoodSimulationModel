@@ -16,7 +16,10 @@ class Food extends BaseTurtle {
 	//cost of the food
 	public double money;
 	//time to germinate after being planted
-	public gTime;
+	public int gTime;
+	//whether a plant is fertilized or not
+	public boolean fertilized
+	
 	
 	//default constructor
 	public Food(){
