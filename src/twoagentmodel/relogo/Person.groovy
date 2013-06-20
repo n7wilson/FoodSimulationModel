@@ -1,17 +1,23 @@
 package twoagentmodel.relogo
 
 
-import static repast.simphony.relogo.Utility.*;
-import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BasePatch;
-import repast.simphony.relogo.BaseTurtle;
-import repast.simphony.relogo.Plural;
-import repast.simphony.relogo.Stop;
-import repast.simphony.relogo.Utility;
-import repast.simphony.relogo.UtilityG;
+import static repast.simphony.relogo.Utility.*
+import static repast.simphony.relogo.UtilityG.*
+import repast.simphony.relogo.BasePatch
+import repast.simphony.relogo.BaseTurtle
+import repast.simphony.relogo.Plural
+import repast.simphony.relogo.Stop
+import repast.simphony.relogo.Utility
+import repast.simphony.relogo.UtilityG
 
 //base class for all People agents
 class Person extends BaseTurtle {
+	//agents status, used to determine what the agent should be doing, read only
+	protected String status;
+	public String getStatus(){
+		return status;
+	}
+	
 	//current energy of the agent
 	protected int energy;
 	//modifier for the agents energy, don't want to be able to set it outright
@@ -60,33 +66,39 @@ class Person extends BaseTurtle {
 		workHoursLeft = workHours;
 	}
 	
-	
+	//function to have food move from agent to agent
 	public void buy(Person seller){
+		//find food that the agent wants to purchase
 		Food item = chooseItem(seller.food)
 		
 		double cost = item.money;
 		int energy = item.energy;
 		
+		//error check in case agent doesn't have enough money
 		if(cost > this.money){
 			this.label = "Not enough money..."
 			return
 		}
 		
+		//have money and food change hands
 		this.addMoney(-cost)
 		seller.addMoney(cost);
 		this.food.add(item);
 		seller.food.remove(item);
-		if(seller.getClass().equals(Retailer.class) || seller.getClass().equals(Producer.class))
-		seller.label = "Last item sold: Food -> cost = " + cost + " energy = " + energy
+//		if(seller.getClass().equals(Retailer.class) || seller.getClass().equals(Producer.class)){
+//		seller.label = "Last item sold: Food -> cost = " + cost + " energy = " + energy}
 		
 	}
 	
+	//consume an item of food
 	public void eat(){
 		Food item = food.get(0)
 		this.addEnergy(item.energy)
 		food.remove(item)
 	}
 	
+	//default way of choosing item
+	//look at up to 10 random foods from the seller and choose the cheapest one
 	public Food chooseItem(List<Food> inventory){
 		long seed = System.nanoTime();
 		Collections.shuffle(inventory, new Random(seed));
@@ -101,6 +113,7 @@ class Person extends BaseTurtle {
 		return item;
 	}
 	
+	//sets all the agent properties for a new day
 	public void nextDay(){
 		this.workHoursLeft += this.workHours;
 	}

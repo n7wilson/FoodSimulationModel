@@ -39,6 +39,7 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
+	//adds 1 Consumer to the simulation
 	def addConsumer(){
 		setDefaultShape(Consumer, "person")
 		createConsumers(1){
@@ -49,12 +50,13 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
+	//updates the simulation
 	def Update(){
 		updateRetailers()
 		updateConsumers()
 	}
 	
-	
+	//updates the number of retailers
 	def updateRetailers(){
 		def additional = numRetailers - retailers().size()
 		if(additional < 0){
@@ -69,6 +71,7 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
+	//updates the number of consumers
 	def updateConsumers(){
 		def additional = numConsumers - consumers().size()
 		if(additional < 0){
@@ -86,6 +89,7 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
+	//move the model forward one tick
 	def go(){
 		tick++
 		ask(consumers()){
@@ -95,9 +99,13 @@ class UserObserver extends BaseObserver{
 			step()
 		}
 		ask(producers()){
+			growPlants()
 			work()
 		}
+		//used to set speed of model
 		sleep(timeInterval);
+		
+		//sets the agents properties for each new day
 		if(tick > 720){
 			tick = 0
 			ask(persons()){

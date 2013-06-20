@@ -15,6 +15,8 @@ class Food extends BaseTurtle {
 	public int energy;
 	//cost of the food
 	public double money;
+	//time to germinate after being planted
+	public gTime;
 	
 	//default constructor
 	public Food(){
@@ -22,5 +24,12 @@ class Food extends BaseTurtle {
 		NormalDistribution energyrandom = new NormalDistribution(avgEng, 30);
 		energy = (int) energyrandom.sample();
 		money = ceiling(100 * moneyrandom.sample())/100;
+		gTime = 20;
+	}
+	
+	public Food(Food planted){
+		energy = planted.energy
+		money = planted.money
+		gTime = planted.gTime
 	}
 }
