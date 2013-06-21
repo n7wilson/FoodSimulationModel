@@ -2,6 +2,9 @@ package twoagentmodel.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
+
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.BaseTurtle;
 import repast.simphony.relogo.Plural;
@@ -42,7 +45,12 @@ class Distributor extends Person {
 			case "loading":
 				//transfer food 
 				//either to a Retailer or from a Producer
-				moveFood(destination)
+				def noFoodLeft = moveFood(destination)
+				if(noFoodLeft){
+					status = "driving"
+					loadingTimeLeft = loadingTime
+					getDestination()
+				}
 				loadingTimeLeft--
 				workHoursLeft--
 				if(loadingTimeLeft <= 0){
@@ -73,14 +81,27 @@ class Distributor extends Person {
 	
 	//moves food between the Distributor and its destination
 	//sell to a Retailer or buy from a Distributor
-	def moveFood(Person destination){
+	public boolean moveFood(Person destination){
 		if(destination.getClass().equals(Retailer.class)){
 			if(!destination.food.empty){
-				destination.buy(this)
+				if(this.food.size == 0){
+					return true
+				}
+				else{
+					destination.buy(this)
+					return false
+				}
+
 			}
 		}
 		else{
-			buy(destination)
+			if(destination.food.size == 0){
+					return true
+			}
+			else{
+				buy(destination)
+				return false
+			}
 		}
 	}
 }

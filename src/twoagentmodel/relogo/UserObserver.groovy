@@ -9,6 +9,7 @@ import repast.simphony.relogo.UtilityG;
 
 class UserObserver extends BaseObserver{
 	def tick = 0
+	def environment = new Environment()
 	
 	def setup(){
 		clearAll()
@@ -102,15 +103,13 @@ class UserObserver extends BaseObserver{
 			growPlants()
 			work()
 		}
-		ask(persons()) {
-			updateFood()
-		}
 		//used to set speed of model
 		sleep(timeInterval);
 		
 		//sets the agents properties for each new day
 		if(tick > 720){
 			tick = 0
+			environment.update()
 			ask(persons()){
 				nextDay()
 			}
@@ -120,5 +119,24 @@ class UserObserver extends BaseObserver{
 			}
 		}
 	}
+	
+	//Functions for monitors:
+	
+	def getSeason(){
+		environment.season.toString()
+	}
+	
+	def getTemp(){
+		environment.temp
+	}
+	
+	def getWind(){
+		environment.wind
+	}
+	
+	def getWeather(){
+		environment.weather.toString()
+	}
+	
 
 }

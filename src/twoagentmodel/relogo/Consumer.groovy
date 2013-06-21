@@ -5,6 +5,7 @@ import static repast.simphony.relogo.UtilityG.*;
 
 import java.util.List;
 
+import repast.simphony.relogo.AgentSet
 import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.BaseTurtle;
 import repast.simphony.relogo.Plural;
@@ -40,12 +41,15 @@ class Consumer extends Person {
 	
 	def step(){
 		this.addEnergy(-1)
-		//label = this.getEnergy()
+		label = this.getEnergy()
 		
 		//if the agent needs food this takes priority
 		if(this.getEnergy() < hungerMin){
-			status = "hungry"
-			store = minOneOf(retailers()){this.distance(it)}
+			if(status != "hungry"){
+				status = "hungry"
+				def filteredRet = retailers().with({it.food.size != 0})
+				store = minOneOf(filteredRet){this.distance(it)}
+			}
 		}
 		//if agent still needs to work this is next priority
 		else if(workHoursLeft > 0){
@@ -66,6 +70,7 @@ class Consumer extends Person {
 					}
 					else{
 						this.buy(store)
+						store = null
 					}
 				}
 				//otherwise eat some of the food the agent has

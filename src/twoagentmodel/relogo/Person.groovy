@@ -119,6 +119,10 @@ class Person extends BaseTurtle {
 		//find food that the agent wants to purchase
 		Food item = chooseItem(seller.food)
 		
+		if(item == null){
+			return
+		}
+		
 		double cost = item.money;
 		int energy = item.energy;
 		
@@ -163,6 +167,9 @@ class Person extends BaseTurtle {
 	//default way of choosing item
 	//look at up to 10 random foods from the seller and choose the cheapest one
 	public Food chooseItem(List<Food> inventory){
+		if(inventory.size == 0){
+			return null
+		}
 		long seed = System.nanoTime();
 		Collections.shuffle(inventory, new Random(seed));
 		Food item = inventory.get(0)

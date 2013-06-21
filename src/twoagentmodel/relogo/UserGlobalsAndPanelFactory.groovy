@@ -43,5 +43,10 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
 		addSliderWL("avgCost", "Average Food Cost",1,1,100,10)
 		addSliderWL("avgEng", "Average Food Energy",100,5,2000,300)
 		addSliderWL("timeInterval", "Time Interval",1,1,100,35)
+		
+		addMonitorWL("getSeason", "Season", 3)
+		addMonitorWL("getTemp", "Temperature (C)", 3)
+		addMonitorWL("getWind", "Wind Speed (km/h)", 3)
+		addMonitorWL("getWeather", "Current Weather", 3)
 	}
 }
