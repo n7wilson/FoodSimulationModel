@@ -102,6 +102,9 @@ class UserObserver extends BaseObserver{
 			growPlants()
 			work()
 		}
+		ask(persons()) {
+			updateFood()
+		}
 		//used to set speed of model
 		sleep(timeInterval);
 		

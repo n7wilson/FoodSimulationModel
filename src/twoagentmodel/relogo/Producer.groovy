@@ -98,4 +98,19 @@ class Producer extends Person {
 			planted.remove(plant)
 		}
 	}
+	
+	def addSeed() {
+		Random random = new Random();
+		int i = random.nextInt(3);
+		
+		if (i == 0) {
+			planted.add(new Junk());
+		}
+		else if (i == 1) {
+			planted.add(new Meat());
+		}
+		else {
+			planted.add(new Produce());
+		}
+	}
 }

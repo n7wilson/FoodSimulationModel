@@ -20,6 +20,10 @@ class Food extends BaseTurtle {
 	//whether a plant is fertilized or not
 	public boolean fertilized
 	
+	public int health;
+	
+	public int expiry;
+	
 	
 	//default constructor
 	public Food(){
@@ -27,6 +31,8 @@ class Food extends BaseTurtle {
 		NormalDistribution energyrandom = new NormalDistribution(avgEng, 30);
 		energy = (int) energyrandom.sample();
 		money = ceiling(100 * moneyrandom.sample())/100;
+		health = 10
+		expiry = 200
 		gTime = 20;
 	}
 	

@@ -29,6 +29,48 @@ class Person extends BaseTurtle {
 		return this.energy;
 	}
 	
+	// health of agent, from 0 - 100
+	public int health;
+	
+	public void addHealth(int health) {
+		health += health;
+		if (health > 100) {
+			health = 100;
+		}
+		else if (health < 0) {
+			health = 0;
+		}
+	}
+	
+	public int getHealth() {
+		return this.health;
+	}
+	
+	public String pref;
+	
+	private String[] preferences = [ "none", "meat", "produce", "junk" ];
+	
+	public void setPref() {
+		Random random = new Random();
+		int i = random.nextInt(preferences.size());
+		if (i == 0) {
+			pref = "meat";
+		}
+		else if (i == 1) {
+			pref = "produce";
+		}
+		else if (i == 2) {
+			pref = "junk";
+		}
+		else {
+			pref = "none";
+		}
+	}
+	
+	public String getPref() {
+		return this.pref;
+	}
+	
 	//current available funds of the agent
 	protected double money;
 	//modifier for the agents energy, similar to energy
@@ -94,7 +136,22 @@ class Person extends BaseTurtle {
 	public void eat(){
 		Food item = food.get(0)
 		this.addEnergy(item.energy)
+		this.addHealth(item.health)
 		food.remove(item)
+	}
+	
+	// removes expired food from person's food stash
+	public void updateFood() {
+		List<Food> toRemove = new ArrayList<Food>();
+		for(Food item: food) {
+			item.expiry--
+			if (item.expiry <= 0) {
+				toRemove.add(item);
+			}
+		}
+		for(Food item: toRemove) {
+			food.remove(item);
+		}
 	}
 	
 	//default way of choosing item

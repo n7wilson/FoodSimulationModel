@@ -25,7 +25,7 @@ CP=$CP:$REPAST_SIMPHONY_LIB/commons-cli-1.2.jar
 CP=$CP:$PWD/groovylib/$Groovy_All_Jar
 
 # Change to the Default Repast Simphony Directory
-cd NewProject
+cd TwoAgentModel
 
 # Start the Model
-java -Xss10M -Xmx400M -cp $CP repast.simphony.runtime.RepastMain  ./NewProject.rs
+java -Xss10M -Xmx400M -cp $CP repast.simphony.runtime.RepastMain  ./TwoAgentModel.rs

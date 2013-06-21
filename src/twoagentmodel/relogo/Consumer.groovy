@@ -37,6 +37,7 @@ class Consumer extends Person {
 	}
 	
 	
+	
 	def step(){
 		this.addEnergy(-1)
 		//label = this.getEnergy()
@@ -92,6 +93,68 @@ class Consumer extends Person {
 				}
 				break
 		}
+	}
+	
+	@Override
+	// currently consumers are starving if they can't afford
+	// the cheapest food of their preference.
+	public Food chooseItem(List<Food> inventory) {		
+		long seed = System.nanoTime();
+		Collections.shuffle(inventory, new Random(seed));
+		Food item = inventory.get(0)
+		int numItems = Math.min(10, inventory.size())
+		
+		if (this.pref == "meat") {
+			for(int i = 0; i < numItems; i++) {
+				def nextitem = inventory.get(i)
+				if (nextitem.getClass().equals(Meat)) {
+					if (!item.getClass().equals(Meat)) {
+						item = nextitem;
+					}
+					else if (nextitem.money < item.money) {
+						item = nextitem;
+					}
+				}
+			}
+		}
+		
+		else if (this.pref == "produce") {
+			for(int i = 0; i < numItems; i++) {
+				def nextitem = inventory.get(i)
+				if (nextitem.getClass().equals(Produce)) {
+					if (!item.getClass().equals(Produce)) {
+						item = nextitem;
+					}
+					else if (nextitem.money < item.money) {
+						item = nextitem;
+					}
+				}
+			}
+		}
+		
+		else if (this.pref == "Junk") {
+			for(int i = 0; i < numItems; i++) {
+				def nextitem = inventory.get(i)
+				if (nextitem.getClass().equals(Junk)) {
+					if (!item.getClass().equals(Junk)) {
+						item = nextitem;
+					}
+					else if (nextitem.money < item.money) {
+						item = nextitem;
+					}
+				}
+			}
+		}
+		
+		else {
+			for(int i = 0; i < numItems; i++){
+				def nextitem = inventory.get(i)
+				if(nextitem.money < item.money){
+					item = nextitem;
+				}
+			}
+		}
+		return item;
 	}
 	
 	def notAtLocation(BaseTurtle agent){
