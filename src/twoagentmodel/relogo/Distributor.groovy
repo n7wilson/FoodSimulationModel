@@ -16,8 +16,9 @@ class Distributor extends Person {
 	//where the driver is going
 	public Person destination = null
 	//how much time it takes to load the truck
-	def loadingTime = 10
+	def loadingTime = 40
 	def loadingTimeLeft = loadingTime
+	def tick = 4
 	
 	public Distributor(){
 		status = "driving"
@@ -45,18 +46,22 @@ class Distributor extends Person {
 			case "loading":
 				//transfer food 
 				//either to a Retailer or from a Producer
-				def noFoodLeft = moveFood(destination)
-				if(noFoodLeft){
-					status = "driving"
-					loadingTimeLeft = loadingTime
-					getDestination()
-				}
-				loadingTimeLeft--
-				workHoursLeft--
-				if(loadingTimeLeft <= 0){
-					status = "driving"
-					loadingTimeLeft = loadingTime
-					getDestination()
+				tick--
+				if(tick == 0){
+					tick = 3
+					def noFoodLeft = moveFood(destination)
+					if(noFoodLeft){
+						status = "driving"
+						loadingTimeLeft = loadingTime
+						getDestination()
+					}
+					loadingTimeLeft--
+					workHoursLeft--
+					if(loadingTimeLeft <= 0){
+						status = "driving"
+						loadingTimeLeft = loadingTime
+						getDestination()
+					}
 				}
 				break
 			case "sleeping":

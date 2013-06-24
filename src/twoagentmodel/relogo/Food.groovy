@@ -19,9 +19,9 @@ class Food extends BaseTurtle {
 	public int gTime;
 	//whether a plant is fertilized or not
 	public boolean fertilized
-	
+	//health value of food
 	public int health;
-	
+	//expiry date of food, how long before it has to be thrown out
 	public int expiry;
 	
 	
