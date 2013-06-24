@@ -14,6 +14,6 @@ class Junk extends Food {
 	public Junk() {
 		health = -20
 		expiry = 10000;
-		gTime = 10;
+		gTime = 100;
 	}
 }

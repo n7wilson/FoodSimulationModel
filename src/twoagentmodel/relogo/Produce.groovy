@@ -14,6 +14,6 @@ class Produce extends Food {
 	public Produce() {
 		health = 20;
 		expiry = 3000;
-		gTime = 20;
+		gTime = 200;
 	}
 }

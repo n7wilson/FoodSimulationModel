@@ -184,7 +184,17 @@ class Person extends BaseTurtle {
 	}
 	
 	//sets all the agent properties for a new day
-	public void nextDay(){
+	public void nextDay(boolean windy){
 		this.workHoursLeft += this.workHours;
+		if(this.class == Producer.class){
+			for(Food f:planted){
+				f.watered = false
+			}
+			if(windy && !planted.isEmpty()){
+				long seed = System.nanoTime();
+				Collections.shuffle(planted, new Random(seed));
+				planted.remove(0)
+			}
+		}
 	}
 }

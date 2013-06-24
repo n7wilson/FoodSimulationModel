@@ -23,6 +23,8 @@ class Food extends BaseTurtle {
 	public int health;
 	//expiry date of food, how long before it has to be thrown out
 	public int expiry;
+	//boolean for whether the plant has been watered or not
+	public boolean watered;
 	
 	
 	//default constructor
@@ -32,13 +34,18 @@ class Food extends BaseTurtle {
 		energy = (int) energyrandom.sample();
 		money = ceiling(100 * moneyrandom.sample())/100;
 		health = 10
-		expiry = 200
-		gTime = 20;
+		expiry = 2000
+		gTime = 200;
+		watered = false
 	}
 	
 	public Food(Food planted){
 		energy = planted.energy
 		money = planted.money
 		gTime = planted.gTime
+		health = planted.health
+		expiry = planted.expiry
+		watered = false
 	}
+	
 }

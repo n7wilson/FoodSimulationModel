@@ -141,7 +141,7 @@ class Consumer extends Person {
 			}
 		}
 		
-		else if (this.pref == "junk") {
+		else if (this.pref == "Junk") {
 			for(int i = 0; i < numItems; i++) {
 				def nextitem = inventory.get(i)
 				if (nextitem.getClass().equals(Junk)) {

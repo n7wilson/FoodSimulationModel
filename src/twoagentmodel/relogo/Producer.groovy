@@ -18,10 +18,13 @@ class Producer extends Person {
 	//job after loading a Distributor
 	def preStatus = "harvesting"
 	
+	def noJob
+	
 	public Producer(){
 		planted = new ArrayList<Food>()
 		ready = new ArrayList<Food>()
 		status = "planting"
+		noJob = false
 		//initialize the farms with harvested and planted food
 		for(int i = 0; i < 500; i++){
 			food.add(new Food())
@@ -46,23 +49,39 @@ class Producer extends Person {
 				planted.add(new Food())
 				break
 			case "maintaining":
+				noJob = true
 				for(Food plant: planted){
-					if(!plant.fertilized){
-						plant.fertilized = true
+					if(!plant.watered){
+						plant.watered = true
+						noJob = false
+						label = "watering"
 						break
 					}
+				}
+				if(noJob){
+					for(Food plant: planted){
+						if(!plant.fertilized){
+							plant.fertilized = true
+							noJob = false
+							label = "fertilizing"
+							break
+						}
+					}
+				}
+				if(noJob){
+					
 				}
 		}
 		if(!dest.empty){
 			status = "loading"
 			label = "loading"
 		}
-		else if(planted.size > 10){
-			setJob("maintaining")
+		else if(planted.size > 10 && !noJob){
+			status = "maintaining"
 		}
-		else if(ready.empty){
+		else if(ready.empty || noJob){
 			setJob("planting")
-			
+			noJob = false
 		}
 		else if(ready.size > 10){
 			setJob("harvesting")
@@ -87,6 +106,9 @@ class Producer extends Person {
 			if(plant.fertilized){
 				plant.gTime--
 				plant.fertilized = false
+			}
+			if(plant.watered){
+				plant.gTime--
 			}
 			plant.gTime--
 			if(plant.gTime <= 0){

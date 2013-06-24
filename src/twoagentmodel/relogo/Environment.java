@@ -142,5 +142,7 @@ public class Environment {
 		//TODO: change logic of how temperature is determined
 		NormalDistribution tempRandom = new NormalDistribution(avgTemp, 6); 
 		temp = (int) tempRandom.sample();
+		Random rn = new Random();
+		wind = rn.nextInt(60);
 	}
 }

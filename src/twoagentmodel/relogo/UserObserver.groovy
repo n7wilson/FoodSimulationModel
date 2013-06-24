@@ -100,7 +100,9 @@ class UserObserver extends BaseObserver{
 			step()
 		}
 		ask(producers()){
-			growPlants()
+			if(environment.season == Environment.Season.WINTER){
+				growPlants()
+			}
 			work()
 		}
 		//used to set speed of model
@@ -111,9 +113,9 @@ class UserObserver extends BaseObserver{
 			tick = 0
 			environment.update()
 			ask(persons()){
-				nextDay()
+				nextDay(environment.wind > 55)
 			}
-			//changes preferences everday
+			//changes preferences everyday
 			ask(persons()){
 				setPref()
 			}
