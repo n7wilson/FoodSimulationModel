@@ -34,7 +34,11 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
 		addButtonWL("addConsumer", "+1 Consumer")
 		addButtonWL("Update", "Update")
 		
-		addSliderWL("numRetailers", "Number of Retailers", 1,1,20,5)
+		addChooserWL("choice", "Food Preference", ["Meat", "Produce", "Junk", "None"])
+		
+		addSliderWL("percent", "Probability Meter", 0.00, 0.01, 1.00, 0.33)
+		
+		addSliderWL("numRetailers", "Number of Retailers", 1,1,20,5)	
 		addSliderWL("numConsumers", "Number of Consumers",1,1,50,10)
 		addSliderWL("avgCost", "Average Food Cost",1,1,100,10)
 		addSliderWL("avgEng", "Average Food Energy",100,5,2000,300)

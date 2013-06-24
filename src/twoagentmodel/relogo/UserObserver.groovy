@@ -114,6 +114,10 @@ class UserObserver extends BaseObserver{
 			ask(persons()){
 				nextDay()
 			}
+			//changes preferences everday
+			ask(persons()){
+				setPref()
+			}
 		}
 	}
 

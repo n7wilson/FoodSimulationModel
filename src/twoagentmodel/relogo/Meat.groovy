@@ -13,7 +13,7 @@ class Meat extends Food {
 
 	public Meat() {
 		health = 5;
-		expiry = 100;
+		expiry = 1000;
 		gTime = 30;
 	}
 }

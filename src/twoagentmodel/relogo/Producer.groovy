@@ -99,6 +99,7 @@ class Producer extends Person {
 		}
 	}
 	
+	// chooses a random class of food to plant
 	def addSeed() {
 		Random random = new Random();
 		int i = random.nextInt(3);

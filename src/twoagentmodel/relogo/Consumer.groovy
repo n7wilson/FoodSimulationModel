@@ -52,6 +52,10 @@ class Consumer extends Person {
 			status = "working"
 		}
 		
+		// if agent is unhealthy, needs to change lifestyle
+		if(this.health <= 10) {
+			setPref()
+		}		
 		
 		switch(status){
 			case "hungry":
@@ -104,7 +108,7 @@ class Consumer extends Person {
 		Food item = inventory.get(0)
 		int numItems = Math.min(10, inventory.size())
 		
-		if (this.pref == "meat") {
+		if (this.pref == "Meat") {
 			for(int i = 0; i < numItems; i++) {
 				def nextitem = inventory.get(i)
 				if (nextitem.getClass().equals(Meat)) {
@@ -118,7 +122,7 @@ class Consumer extends Person {
 			}
 		}
 		
-		else if (this.pref == "produce") {
+		else if (this.pref == "Produce") {
 			for(int i = 0; i < numItems; i++) {
 				def nextitem = inventory.get(i)
 				if (nextitem.getClass().equals(Produce)) {

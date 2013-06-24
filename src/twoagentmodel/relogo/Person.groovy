@@ -46,24 +46,30 @@ class Person extends BaseTurtle {
 		return this.health;
 	}
 	
+	// food preferences
 	public String pref;
-	
-	private String[] preferences = [ "none", "meat", "produce", "junk" ];
+	// array of food preferences
+	private String[] preferences = [ "None", "Meat", "Produce", "Junk" ];
 	
 	public void setPref() {
-		Random random = new Random();
-		int i = random.nextInt(preferences.size());
-		if (i == 0) {
-			pref = "meat";
+		double rn = Math.random()
+		int interval = (1- percent)/(preferences.size() - 1)
+		List<String> prefsLeft = new ArrayList<String>()
+		for(String p:preferences){
+			if(p != choice){
+				prefsLeft.add(p)
+			}
 		}
-		else if (i == 1) {
-			pref = "produce";
+		if(rn < percent){
+			pref = choice
 		}
-		else if (i == 2) {
-			pref = "junk";
-		}
-		else {
-			pref = "none";
+		else{
+			for(int i = 0; i < preferences.size(); i++){
+				if(rn < percent + (i + 1)*interval){
+					pref = prefsLeft.get(i)
+					break
+				}
+			}
 		}
 	}
 	
