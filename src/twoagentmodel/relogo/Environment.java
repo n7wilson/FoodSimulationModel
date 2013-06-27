@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Random;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
+
 
 public class Environment {
 	
@@ -96,10 +100,12 @@ public class Environment {
 	public Season season;
 	public Weather weather;
 	//current temperature in degrees Celsius
-	public int temp;
+	public double temp;
 	//current wind speed in km/hour
-	public int wind;
+	public double wind;
 	public int tick;
+	private FirstOrderDifferentialEquations climate;
+	private double weatherIndex;
 	
 	//average temperature for the current season
 	private int avgTemp;
@@ -126,23 +132,32 @@ public class Environment {
 		weather = Weather.SUNNY;
 		temp = 15;
 		wind = 15;
-		tick = 0;
+		tick = 1;
+		climate = new ClimateODE();
 		updateAvgTemp();
 	}
 	
 	public void update(){
 		tick++;
 		weather = Weather.nextWeather(weather);
-		if(tick >= 10){
+		if(tick % 10 == 0){
 			season = Season.nextSeason(season);
 			updateAvgTemp();
-			tick = 0;
 		}
 		//sets the temperature based on season
-		//TODO: change logic of how temperature is determined
-		NormalDistribution tempRandom = new NormalDistribution(avgTemp, 6); 
-		temp = (int) tempRandom.sample();
-		Random rn = new Random();
-		wind = rn.nextInt(60);
+		updateEnvironment();
+	}
+	
+	public void updateEnvironment(){
+		//integrator for our differencial equation
+		FirstOrderIntegrator dp853 = new DormandPrince853Integrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10);
+		//array to hold the current climate values
+		double[] climateArr = new double[] { weatherIndex, temp - avgTemp, wind};
+		double time = tick / 5;
+		//get the next values for the climate variables
+		dp853.integrate(climate, time, climateArr, time + 0.2, climateArr);
+		weatherIndex = climateArr[0];
+		temp = climateArr[1] + avgTemp;
+		wind = climateArr[2];
 	}
 }
