@@ -4,6 +4,7 @@ package foodsimulationmodel.relogo.agents
 import static repast.simphony.relogo.Utility.*
 import static repast.simphony.relogo.UtilityG.*
 import foodsimulationmodel.relogo.food.*
+import foodsimulationmodel.relogo.*
 import repast.simphony.relogo.BasePatch
 import repast.simphony.relogo.BaseTurtle
 import repast.simphony.relogo.Plural
@@ -64,7 +65,7 @@ class Person extends BaseTurtle {
 		//random number from 0-1 used to assign the Person's preference
 		double rn = Math.random()
 		//the percentage of people who have each preference besides the selected preference
-		int interval = (1 - percent)/(preferences.size() - 1)
+		double interval = (1 - percent)/(preferences.size() - 1)
 		List<String> prefsLeft = new ArrayList<String>()
 		//create a list of the preferences that aren't the selected preference
 		for(String p:preferences){
@@ -83,6 +84,7 @@ class Person extends BaseTurtle {
 				}
 			}
 		}
+		label = pref
 	}
 	
 	public String getPref() {
@@ -123,10 +125,12 @@ class Person extends BaseTurtle {
 	public Person(){
 		food = new ArrayList<Food>()
 		energy = 1000;
+		health = 1000;
 		//TODO: implement money accurately
 		money = 9999999;
 		workHours = 240;
 		workHoursLeft = workHours;
+		setPref()
 	}
 	
 	//Function to have food move from Person to Person

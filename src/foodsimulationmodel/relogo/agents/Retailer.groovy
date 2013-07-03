@@ -14,8 +14,17 @@ class Retailer extends Person {
 	
 	public Retailer(){
 		status = "selling"
-		for(int i = 0; i < 1000; i++){
+		for(int i = 0; i < 100; i++){
+			food.add(new Meat())
+		}
+		for(int i = 0; i < 100; i++){
 			food.add(new Food())
+		}
+		for(int i = 0; i < 100; i++){
+			food.add(new Produce())
+		}
+		for(int i = 0; i < 100; i++){
+			food.add(new Junk())
 		}
 	}
 }

@@ -128,55 +128,18 @@ class Consumer extends Person {
 		//number of items to look at
 		int numItems = Math.min(10, inventory.size())
 		
-		//TODO: bring this logic into it's own function
-		if (this.pref == "Meat") {
-			for(int i = 0; i < numItems; i++) {
-				def nextitem = inventory.get(i)
-				if (nextitem.getClass().equals(Meat)) {
-					if (!item.getClass().equals(Meat)) {
-						item = nextitem;
-					}
-					else if (nextitem.money < item.money) {
-						item = nextitem;
-					}
-				}
-			}
-		}
-		
-		else if (this.pref == "Produce") {
-			for(int i = 0; i < numItems; i++) {
-				def nextitem = inventory.get(i)
-				if (nextitem.getClass().equals(Produce)) {
-					if (!item.getClass().equals(Produce)) {
-						item = nextitem;
-					}
-					else if (nextitem.money < item.money) {
-						item = nextitem;
-					}
-				}
-			}
-		}
-		
-		else if (this.pref == "Junk") {
-			for(int i = 0; i < numItems; i++) {
-				def nextitem = inventory.get(i)
-				if (nextitem.getClass().equals(Junk)) {
-					if (!item.getClass().equals(Junk)) {
-						item = nextitem;
-					}
-					else if (nextitem.money < item.money) {
-						item = nextitem;
-					}
-				}
-			}
-		}
-		
-		else {
-			for(int i = 0; i < numItems; i++){
-				def nextitem = inventory.get(i)
-				if(nextitem.money < item.money){
+		for(int i = 0; i < numItems; i++) {
+			def nextitem = inventory.get(i)
+			if (nextitem.getClass().getSimpleName() == this.pref) {
+				if (item.getClass().getSimpleName() != this.pref) {
 					item = nextitem;
 				}
+				else if (nextitem.money < item.money) {
+					item = nextitem;
+				}
+			}
+			else if(item.getClass().getSimpleName() != this.pref && nextitem.money < item.money){
+				item = nextitem;
 			}
 		}
 		return item;

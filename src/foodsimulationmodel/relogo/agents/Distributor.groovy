@@ -45,30 +45,29 @@ class Distributor extends Person {
 				forward(0.5)
 				if(distance(destination) < 0.5){
 					status = "loading"
+					loadingTimeLeft = loadingTime
 				}
 				workHoursLeft--
 				break
 			case "loading":
 				//transfer food, either to a Retailer or from a Producer
-				tick--
-				if(tick == 0){
+				loadingTimeLeft--
+				itemLoadTimeLeft--
+				workHoursLeft--
+				if(itemLoadTimeLeft == 0){
 					itemLoadTimeLeft = itemLoadTime
 					def noFoodLeft = moveFood(destination)
 					//if there is no food left to move then get next destination and start driving
 					if(noFoodLeft){
 						status = "driving"
-						loadingTimeLeft = loadingTime
 						getDestination()
 					}
-					loadingTimeLeft--
-					workHoursLeft--
-					//if the Distributor is done loading the food
-					// then get next destination and start driving
-					if(loadingTimeLeft <= 0){
-						status = "driving"
-						loadingTimeLeft = loadingTime
-						getDestination()
-					}
+				}
+				//if the Distributor is done loading the food
+				// then get next destination and start driving
+				if(loadingTimeLeft <= 0){
+					status = "driving"
+					getDestination()
 				}
 				break
 			case "sleeping":
