@@ -24,10 +24,12 @@ public class Environment {
 			return code;
 		}
 		
+		//Get the next season
 		public static Season nextSeason(Season current){
 			return getSeason((current.getCode() + 1) % 4);
 		}
 		
+		//Get the season specified by the index
 		public static Season getSeason(int i){
 			if(codeToSeasonMap == null){
 				initMap();
@@ -35,6 +37,7 @@ public class Environment {
 			return codeToSeasonMap.get(i);
 		}
 		
+		//Initialize a map between the Season type and it's integer index
 		private static void initMap(){
 			codeToSeasonMap = new HashMap<Integer, Season>();
 			for(Season s: values()){
@@ -53,6 +56,9 @@ public class Environment {
 			label = l;
 		}
 		
+		//Get the next weather condition
+		//Currently uses a Markov chain to determine next state
+		//TODO: change so function uses CLimateODE
 		public static Weather nextWeather(Weather current){
 			double rn = Math.random();
 			switch(current){
@@ -97,17 +103,22 @@ public class Environment {
 		}
 	}
 	
+	//Current Season
 	public Season season;
+	//Current Weather
 	public Weather weather;
-	//current temperature in degrees Celsius
+	//Current temperature in degrees Celsius
 	public double temp;
-	//current wind speed in km/hour
+	//Current wind speed in km/hour
 	public double wind;
+	
+	//Tracks time
 	public int tick;
+	//Ordinary Differential Equation to represent the climate
 	private FirstOrderDifferentialEquations climate;
 	private double weatherIndex;
 	
-	//average temperature for the current season
+	//Average temperature for the current season
 	private int avgTemp;
 	
 	private void updateAvgTemp(){
@@ -127,6 +138,7 @@ public class Environment {
 		}
 	}
 	
+	//Default constructor
 	public Environment(){
 		season = Season.FALL;
 		weather = Weather.SUNNY;
@@ -137,17 +149,20 @@ public class Environment {
 		updateAvgTemp();
 	}
 	
+	//Updates the climate. Called at end of each day
 	public void update(){
 		tick++;
 		weather = Weather.nextWeather(weather);
+		//if 10 days have passed update Season
 		if(tick % 10 == 0){
 			season = Season.nextSeason(season);
 			updateAvgTemp();
 		}
-		//sets the temperature based on season
+		//sets the temperature and wind based on season
 		updateEnvironment();
 	}
 	
+	//Update the Environment variables based on the ODE used to model climate
 	public void updateEnvironment(){
 		//integrator for our differencial equation
 		FirstOrderIntegrator dp853 = new DormandPrince853Integrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10);

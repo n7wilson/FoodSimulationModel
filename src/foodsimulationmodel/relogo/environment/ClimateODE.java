@@ -2,6 +2,9 @@ package foodsimulationmodel.relogo.environment;
 
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
+//Ordinary Differential Equation used to implement weather patterns and environmental variables.
+//Can use which model you choose, simply change the equations in the "computeDerivatives" function,
+//change the dimension if required and change the necessary equation constants.
 public class ClimateODE implements FirstOrderDifferentialEquations{
 	private double sigma;
 	private double rho;

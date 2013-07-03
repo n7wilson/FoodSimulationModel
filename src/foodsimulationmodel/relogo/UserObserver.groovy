@@ -15,8 +15,18 @@ class UserObserver extends BaseObserver{
 	def tick = 0
 	def environment = new Environment()
 	
+	/*Outside Parameters Referenced:
+	 * numConsumers - number of Consumers to create
+	 * numRetailers - number of Retailers to create
+	 * numDistributors - number of Distributors to create
+	 * numProducers - number of Producers to create
+	 * 
+	 * All parameters are set in the UserGlobalsAndPanelFactory.groovy class
+	 */
 	def setup(){
 		clearAll()
+		//set the shape and coordinates for each type of agent
+		//the number of agents is dependent on 
 		setDefaultShape(Work, "x")
 		createWorks(1){
 			setxy(randomXcor(), randomYcor())
@@ -29,6 +39,8 @@ class UserObserver extends BaseObserver{
 		setDefaultShape(Consumer, "person")
 		createConsumers(numConsumers){
 			setxy(randomXcor(), randomYcor())
+			//set the Consumer's starting store, the Consumer's work place 
+			//and the location of the Consumer's home
 			setStore()
 			setWork()
 			setOrigin()
@@ -40,11 +52,12 @@ class UserObserver extends BaseObserver{
 		setDefaultShape(Distributor, "truck")
 		createDistributors(10){
 			setxy(randomXcor(), randomYcor())
+			//set the first destination for the Distributor
 			getDestination()
 		}
 	}
 	
-	//adds 1 Consumer to the simulation
+	//Add 1 Consumer to the simulation
 	def addConsumer(){
 		setDefaultShape(Consumer, "person")
 		createConsumers(1){
@@ -55,15 +68,17 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
-	//updates the simulation
+	//Update the simulation
 	def Update(){
 		updateRetailers()
 		updateConsumers()
 	}
 	
-	//updates the number of retailers
+	//Update the number of retailers
 	def updateRetailers(){
 		def additional = numRetailers - retailers().size()
+		//if there are too many Retailers then delete excess from 
+		//the front of the list of Retailers
 		if(additional < 0){
 			for(int i = 0; i < -additional; i++){
 				retailers().get(0).die()
@@ -79,6 +94,8 @@ class UserObserver extends BaseObserver{
 	//updates the number of consumers
 	def updateConsumers(){
 		def additional = numConsumers - consumers().size()
+		//if there are too many Retailers then delete excess from
+		//the front of the list of Retailers
 		if(additional < 0){
 			for(int i = 0; i < -additional; i++){
 				consumers().get(0).die()
@@ -94,9 +111,15 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
-	//move the model forward one tick
+	//Move the model forward one tick in time
+	/*Outside Parameters Referenced
+	 * timeInterval - sets sleep time (in milliseconds) for model between calls to go()
+	 * 
+	 * Parameter is set in the UserGlobalsAndPanelFactory.groovy class
+	 */
 	def go(){
 		tick++
+		//step each agent type
 		ask(consumers()){
 			step()
 		}
@@ -104,10 +127,11 @@ class UserObserver extends BaseObserver{
 			step()
 		}
 		ask(producers()){
-			if(environment.season == Environment.Season.WINTER){
+			//if it isn't Winter then the plants grow
+			if(environment.season != Environment.Season.WINTER){
 				growPlants()
 			}
-			work()
+			step()
 		}
 		//used to set speed of model
 		sleep(timeInterval);
@@ -126,8 +150,7 @@ class UserObserver extends BaseObserver{
 		}
 	}
 	
-	//Functions for monitors:
-	
+	//Functions for simulation monitors. Called from UserGlobalsAndPanelFactory.groovy class
 	def getSeason(){
 		environment.season.toString()
 	}

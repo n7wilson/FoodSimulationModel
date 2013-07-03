@@ -11,14 +11,17 @@ import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 
 class Producer extends Person {
-	//plants that are planted and growing
+	//Plants that are planted and growing
 	public List<Food> planted
-	//plants that have grown but haven't been harvested yet
+	//Plants that have grown but haven't been harvested yet
 	public List<Food> ready
-	//job that the Producer was last doing. Used to revert to previous
-	//job after loading a Distributor
+	//Job that the Producer was last doing. Used to revert to previous
+	//Job after loading a Distributor
 	def preStatus = "harvesting"
 	
+	//Boolean used while Producer is maintaining plants.
+	//True if the Producer has already watered and fertilized all the plants
+	//False otherwise
 	def noJob
 	
 	public Producer(){
@@ -35,18 +38,21 @@ class Producer extends Person {
 		}
 	}
 	
-	def work(){
+	//Perform task for this tick
+	def step(){
 		//list of distributors that are at the farm
 		//TODO: Fix possible issues when farms are close together since this
 		//list depends on distance. Tried to add in error checking for this
 		//but ran into problems
 		def dest = distributors().findAll { this.distance(it) < 0.5 }
 		switch(status){
-			case "harvesting": 
+			case "harvesting":
+				//move one Food item from to the Producer's inventory 
 				food.add(new Food(ready.get(0)))
 				ready.remove(0)
 				break
 			case "planting": 
+				//plant one new Food item
 				planted.add(new Food())
 				break
 			case "maintaining":
@@ -73,37 +79,47 @@ class Producer extends Person {
 					
 				}
 		}
+		//if there is a Distributor at the farm then load Food
 		if(!dest.empty){
 			status = "loading"
 			label = "loading"
 		}
+		//otherwise if there are enough plants planted and there are still plants to
+		//water and fertilize then maintain the plants
 		else if(planted.size > 10 && !noJob){
 			status = "maintaining"
 		}
+		//if there are no more plants to water or fertilize then plant more
+		//TODO: fix so that Producer does not end up jumping back and forth
+		//between planting, watering and fertilizing
 		else if(ready.empty || noJob){
 			setJob("planting")
 			noJob = false
 		}
+		//if there are more enough plants that need to be harvested then harvest them
 		else if(ready.size > 10){
 			setJob("harvesting")
 		}
+		//if the Producer just finished loading go back to what the Producer was doing before
 		else{
 			status = preStatus
 			label = preStatus
 		}
 	}
 	
-	//sets the current job that the Producer is doing
+	//Sets the Producer's current task
 	def setJob(String job){
 		label = job
 		status = job
 		preStatus = job
 	}
 	
-	//function called each tick, makes plants grow
+	//Function called each tick, makes plants grow
 	def growPlants(){
+		//list of plants that are ready to be picked
 		def toRemove = new ArrayList<Food>()
 		for(Food plant: planted){
+			//grow plants, if fertilized and watered then grow faster
 			if(plant.fertilized){
 				plant.gTime--
 				plant.fertilized = false
@@ -112,17 +128,19 @@ class Producer extends Person {
 				plant.gTime--
 			}
 			plant.gTime--
+			//add the plant to the list of plants that are ready if it has finished growing
 			if(plant.gTime <= 0){
-				ready.add(plant)
 				toRemove.add(plant)
 			}
 		}
+		//for each plant that is ready to be picked move it to the "ready" list
 		for(Food plant: toRemove){
+			ready.add(plant)
 			planted.remove(plant)
 		}
 	}
 	
-	// chooses a random class of food to plant
+	// Chooses a random class of food to plant
 	def addSeed() {
 		Random random = new Random();
 		int i = random.nextInt(3);

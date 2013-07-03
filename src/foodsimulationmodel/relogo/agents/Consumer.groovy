@@ -16,10 +16,15 @@ import repast.simphony.relogo.UtilityG;
 
 class Consumer extends Person {
 	def generator = new Random()
+	//Reference for next store the Consumer will buy food from
 	def store = null
+	//Consumer's house
 	def origin = null
+	//Consumer's work
 	def work = null
+	//Threshold at which Consumer gets hungry and must eat food
 	def hungerMin = 500
+	//Money made from working (per tick)
 	def salary = 30
 	
 	public Consumer(){
@@ -34,17 +39,19 @@ class Consumer extends Person {
 		origin = patchHere()
 	}
 	
+	//Default way of setting the Consumer's work location.
+	//If more than one work location is added then should be modified
 	def setWork(){
 		work = work(0)
 	}
 	
 	
-	
+	//Perform task for this tick
 	def step(){
 		this.addEnergy(-1)
 		label = this.getEnergy()
 		
-		//if the agent needs food this takes priority
+		//if the Consumer needs food this takes priority
 		if(this.getEnergy() < hungerMin){
 			if(status != "hungry"){
 				status = "hungry"
@@ -52,23 +59,26 @@ class Consumer extends Person {
 				store = minOneOf(filteredRet){this.distance(it)}
 			}
 		}
-		//if agent still needs to work this is next priority
+		//if the Consumer still needs to work this is next priority
 		else if(workHoursLeft > 0){
 			status = "working"
 		}
 		
-		// if agent is unhealthy, needs to change lifestyle
+		//if the Consumer is unhealthy, needs to change lifestyle
+		//may modify how lifestyle is changed
 		if(this.health <= 10) {
 			setPref()
 		}		
 		
+		//decide what to do based on the Consumer's status
 		switch(status){
 			case "hungry":
-				//if the agent doesn't have any food with them then go to the store
+				//if the Consumer doesn't have any food with them then go to the store
 				if(food.empty){
 					if(notAtLocation(store)){
 						moveTowards(store) 
 					}
+					//if the Consumer is at the store then buy an item of food based on preferences
 					else{
 						this.buy(store)
 						store = null
@@ -97,6 +107,7 @@ class Consumer extends Person {
 				}
 				break
 			default:
+				//if the Consumer doesn't have anything else to do go home
 				if(distance(origin) > 0.5){
 					face(origin)
 					forward(0.5)
@@ -110,10 +121,14 @@ class Consumer extends Person {
 	// the cheapest food of their preference.
 	public Food chooseItem(List<Food> inventory) {		
 		long seed = System.nanoTime();
+		//shuffle the inventory of the seller so the Consumers aren't looking
+		//at the same items each time
 		Collections.shuffle(inventory, new Random(seed));
 		Food item = inventory.get(0)
+		//number of items to look at
 		int numItems = Math.min(10, inventory.size())
 		
+		//TODO: bring this logic into it's own function
 		if (this.pref == "Meat") {
 			for(int i = 0; i < numItems; i++) {
 				def nextitem = inventory.get(i)
@@ -167,6 +182,7 @@ class Consumer extends Person {
 		return item;
 	}
 	
+	//TODO: implement this as speed
 	def notAtLocation(BaseTurtle agent){
 		return distance(agent) > 0.5
 	}
