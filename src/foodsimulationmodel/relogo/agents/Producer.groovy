@@ -17,7 +17,11 @@ class Producer extends Person {
 	public List<Food> ready
 	//Job that the Producer was last doing. Used to revert to previous
 	//Job after loading a Distributor
-	def preStatus = "harvesting"
+	def preStatus = "planting"
+	
+	//Amount of time that the Producer agent will spend on each job (minimum)
+	private int jobTime
+	private int jobTimeLeft
 	
 	//Boolean used while Producer is maintaining plants.
 	//True if the Producer has already watered and fertilized all the plants
@@ -29,6 +33,8 @@ class Producer extends Person {
 		ready = new ArrayList<Food>()
 		status = "planting"
 		noJob = false
+		jobTime = 30
+		jobTimeLeft = jobTime
 		//initialize the farms with harvested and planted food
 		for(int i = 0; i < 500; i++){
 			food.add(new Food())
@@ -50,10 +56,12 @@ class Producer extends Person {
 				//move one Food item from to the Producer's inventory 
 				food.add(new Food(ready.get(0)))
 				ready.remove(0)
+				jobTimeLeft--
 				break
 			case "planting": 
 				//plant one new Food item
 				planted.add(new Food())
+				jobTimeLeft--
 				break
 			case "maintaining":
 				noJob = true
@@ -76,7 +84,7 @@ class Producer extends Person {
 					}
 				}
 				if(noJob){
-					
+					jobTimeLeft = 0
 				}
 		}
 		//if there is a Distributor at the farm then load Food
@@ -84,24 +92,27 @@ class Producer extends Person {
 			status = "loading"
 			label = "loading"
 		}
-		//otherwise if there are enough plants planted and there are still plants to
-		//water and fertilize then maintain the plants
-		else if(planted.size > 10 && !noJob){
-			status = "maintaining"
-		}
-		//if there are no more plants to water or fertilize then plant more
-		//TODO: fix so that Producer does not end up jumping back and forth
-		//between planting, watering and fertilizing
-		else if(ready.empty || noJob){
-			setJob("planting")
-			noJob = false
-		}
-		//if there are more enough plants that need to be harvested then harvest them
-		else if(ready.size > 10){
-			setJob("harvesting")
+		else if(jobTimeLeft == 0){
+			//otherwise if there are enough plants planted and there are still plants to
+			//water and fertilize then maintain the plants
+			if(planted.size > 10 && !noJob){
+				jobTimeLeft = jobTime
+				status = "maintaining"
+			}
+			//if there are no more plants to water or fertilize then plant more
+			else if(ready.empty || noJob){
+				jobTimeLeft = jobTime
+				setJob("planting")
+				noJob = false
+			}
+			//if there are more enough plants that need to be harvested then harvest them
+			else if(ready.size > 10){
+				jobTimeLeft = jobTime
+				setJob("harvesting")
+			}	
 		}
 		//if the Producer just finished loading go back to what the Producer was doing before
-		else{
+		else if(status == "loading"){
 			status = preStatus
 			label = preStatus
 		}
