@@ -42,8 +42,8 @@ class Distributor extends Person {
 		switch(status){
 			case "driving":
 				face(destination)
-				forward(0.5)
-				if(distance(destination) < 0.5){
+				forward(speed)
+				if(distance(destination) < speed){
 					status = "loading"
 					loadingTimeLeft = loadingTime
 				}

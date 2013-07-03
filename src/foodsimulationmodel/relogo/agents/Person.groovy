@@ -14,6 +14,9 @@ import repast.simphony.relogo.UtilityG
 
 //Base class for all People agents
 class Person extends BaseTurtle {
+	//Movement speed of the Person
+	protected double speed
+	
 	//Person's status, used to determine what the Person should be doing, read only
 	protected String status;
 	public String getStatus(){
@@ -128,6 +131,7 @@ class Person extends BaseTurtle {
 		health = 1000;
 		//TODO: implement money accurately
 		money = 9999999;
+		speed = 0.5;
 		workHours = 240;
 		workHoursLeft = workHours;
 		setPref()

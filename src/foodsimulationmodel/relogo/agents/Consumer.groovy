@@ -108,9 +108,9 @@ class Consumer extends Person {
 				break
 			default:
 				//if the Consumer doesn't have anything else to do go home
-				if(distance(origin) > 0.5){
+				if(distance(origin) > speed){
 					face(origin)
-					forward(0.5)
+					forward(speed)
 				}
 				break
 		}
@@ -145,13 +145,12 @@ class Consumer extends Person {
 		return item;
 	}
 	
-	//TODO: implement this as speed
 	def notAtLocation(BaseTurtle agent){
-		return distance(agent) > 0.5
+		return distance(agent) > speed
 	}
 	
 	def moveTowards(BaseTurtle agent){
 		face(agent)
-		forward(0.5)
+		forward(speed)
 	}
 }
