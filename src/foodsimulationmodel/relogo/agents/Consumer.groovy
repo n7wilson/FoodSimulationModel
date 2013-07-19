@@ -66,8 +66,13 @@ class Consumer extends Person {
 		
 		//if the Consumer is unhealthy, needs to change lifestyle
 		//may modify how lifestyle is changed
+		//speed is reduce when very unhealthy
 		if(this.health <= 10) {
 			setPref()
+			speed = 0.25
+		}
+		else{
+			speed = 0.5
 		}		
 		
 		//decide what to do based on the Consumer's status
@@ -99,6 +104,7 @@ class Consumer extends Person {
 				//TODO: possibly change pay to mirror pay in real life (given in bulk after a time period)
 				else{
 					workHoursLeft--
+					addHealth(-2)
 					if(workHoursLeft <= 0){
 						status = "normal"
 					}
@@ -111,6 +117,9 @@ class Consumer extends Person {
 				if(distance(origin) > speed){
 					face(origin)
 					forward(speed)
+				}
+				else{
+					addHealth(1)
 				}
 				break
 		}

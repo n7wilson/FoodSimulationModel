@@ -4,7 +4,7 @@
 
 <installation version="1.0">
     <info>
-      <appname>TwoAgentModel</appname>
+      <appname>FoodSimulationModel</appname>
 			<appversion>1.0</appversion>
       <summarylogfilepath>$INSTALL_PATH/installinfo/Summary.htm</summarylogfilepath>
     </info>
@@ -99,6 +99,7 @@
             <!-- User Model components -->
             <file src="$StagingArea/installer/start_model.bat" targetdir="$INSTALL_PATH"/>
             <file src="$StagingArea/installer/start_model.command" targetdir="$INSTALL_PATH"/>
+            <file src="$StagingArea/installer/start_model_batch_export.sh" targetdir="$INSTALL_PATH"/>
             <file src="$StagingArea" targetdir="$INSTALL_PATH"/>
             
             <!-- Groovy Library -->
@@ -107,10 +108,10 @@
         		<!-- Repast comppnents  -->
             <file src="$EclipsePluginsDirectory/libs.bsf_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/libs.piccolo_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.batch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            /<file src="$EclipsePluginsDirectory/repast.simphony.batch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.chart_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.core_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.data_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            /<file src="$EclipsePluginsDirectory/repast.simphony.core_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            /<file src="$EclipsePluginsDirectory/repast.simphony.data_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.data.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.dataLoader_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.dataLoader.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
@@ -133,9 +134,9 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.R_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.relogo.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.relogo.ide_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            /<file src="$EclipsePluginsDirectory/repast.simphony.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.eclipse_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.scenario_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            /<file src="$EclipsePluginsDirectory/repast.simphony.scenario_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.spreadsheet_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.distributedBatch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
     		<!-- NOTE! -->
@@ -155,17 +156,17 @@
 
 		<pack name="Sources" required="no">
            	<description>The model source code</description>
-           	<file src="$StagingOptionalArea/src" targetdir="$INSTALL_PATH/TwoAgentModel"/>
+           	<file src="$StagingOptionalArea/src" targetdir="$INSTALL_PATH/FoodSimulationModel"/>
         </pack>
 
         <pack name="Documentation" required="no">
            	<description>The model documentation</description>
-           	<file src="$StagingOptionalArea/docs" targetdir="$INSTALL_PATH/TwoAgentModel"/>
+           	<file src="$StagingOptionalArea/docs" targetdir="$INSTALL_PATH/FoodSimulationModel"/>
         </pack>
 
 <!--        <pack name="Data" required="no">-->
 <!--            <description>The user data</description>-->
-<!--            <file src="repast.simphony.bin_and_src_$REPAST_VERSION/temp/freezedried_data" targetdir="$INSTALL_PATH/TwoAgentModel"/>-->
+<!--            <file src="repast.simphony.bin_and_src_$REPAST_VERSION/temp/freezedried_data" targetdir="$INSTALL_PATH/FoodSimulationModel"/>-->
 <!--        </pack>-->
     </packs>
 
