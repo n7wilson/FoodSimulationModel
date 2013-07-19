@@ -108,10 +108,10 @@
         		<!-- Repast comppnents  -->
             <file src="$EclipsePluginsDirectory/libs.bsf_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/libs.piccolo_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            /<file src="$EclipsePluginsDirectory/repast.simphony.batch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.batch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.chart_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            /<file src="$EclipsePluginsDirectory/repast.simphony.core_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            /<file src="$EclipsePluginsDirectory/repast.simphony.data_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.core_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.data_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.data.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.dataLoader_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.dataLoader.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
@@ -134,9 +134,9 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.R_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.relogo.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.relogo.ide_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            /<file src="$EclipsePluginsDirectory/repast.simphony.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.eclipse_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            /<file src="$EclipsePluginsDirectory/repast.simphony.scenario_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.scenario_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.spreadsheet_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.distributedBatch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
     		<!-- NOTE! -->
