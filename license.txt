@@ -1,1 +1,1 @@
-The TwoAgentModel model is licensed as provided for by the authors. Please contact them for details.
+The FoodSimulationModel model is licensed as provided for by the authors. Please contact them for details.

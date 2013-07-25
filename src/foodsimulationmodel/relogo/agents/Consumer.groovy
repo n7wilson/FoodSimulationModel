@@ -28,6 +28,7 @@ class Consumer extends Person {
 	def salary = 30
 	
 	public Consumer(){
+		type = "Consumer"
 		status = "working"
 	}
 

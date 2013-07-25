@@ -29,6 +29,7 @@ class Producer extends Person {
 	def noJob
 	
 	public Producer(){
+		type = "Producer"
 		planted = new ArrayList<Food>()
 		ready = new ArrayList<Food>()
 		status = "planting"

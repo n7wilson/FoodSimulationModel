@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<sweep runs="1">
+	<parameter name="Default Random Seed" type="constant" constant_type="number" value="914509816"/>
+	<parameter name="default_observer_maxPxcor" type="constant" constant_type="number" value="16"/>
+	<parameter name="default_observer_maxPycor" type="constant" constant_type="number" value="16"/>
+	<parameter name="default_observer_minPxcor" type="constant" constant_type="number" value="-16"/>
+	<parameter name="default_observer_minPycor" type="constant" constant_type="number" value="-16"/>
+</sweep>

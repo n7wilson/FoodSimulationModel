@@ -14,6 +14,7 @@ import repast.simphony.relogo.UtilityG;
 class UserObserver extends BaseObserver{
 	def tick = 0
 	def environment = new Environment()
+	def filenum = 0
 	
 	/*Outside Parameters Referenced:
 	 * numConsumers - number of Consumers to create
@@ -55,6 +56,7 @@ class UserObserver extends BaseObserver{
 			//set the first destination for the Distributor
 			getDestination()
 		}
+		WriteToFile()
 	}
 	
 	//Add 1 Consumer to the simulation
@@ -148,6 +150,9 @@ class UserObserver extends BaseObserver{
 				setPref()
 			}
 		}
+		if(tick % 10 == 0){
+			WriteToFile()
+		}
 	}
 	
 	//Functions for simulation monitors. Called from UserGlobalsAndPanelFactory.groovy class
@@ -165,6 +170,24 @@ class UserObserver extends BaseObserver{
 	
 	def getWeather(){
 		environment.weather.toString()
+	}
+	
+	//Function for writing data to file
+	def WriteToFile(){
+		def writer = new File("FoodSimulationData/testdata" + filenum + ".csv")
+		if(! writer.exists()){
+			writer.createNewFile()
+		}
+		
+		writer.append("type,xcor,ycor,id\n")
+		
+		for(Person p:persons()){
+			writer.append(p.type + "," + p.getXcor() + "," + p.getYcor() + "," + p.getWho() + "\n")
+		}
+		for(Work workplace: works()){
+			writer.append("Work," + workplace.getXcor() + "," + workplace.getYcor() + "," + workplace.getWho() + "\n")
+		}
+		filenum++
 	}
 	
 

@@ -14,6 +14,9 @@ import repast.simphony.relogo.UtilityG
 
 //Base class for all People agents
 class Person extends BaseTurtle {
+	//Type of agent, stored for reference when sending data to database
+	protected String type
+	
 	//Movement speed of the Person
 	protected double speed
 	

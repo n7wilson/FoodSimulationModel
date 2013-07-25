@@ -7,9 +7,12 @@ import foodsimulationmodel.relogo.UserObserver;
 import foodsimulationmodel.relogo.UserPatch;
 import foodsimulationmodel.relogo.UserTurtle;
 import repast.simphony.context.Context;
+import repast.simphony.context.space.grid.GridFactory
+import repast.simphony.context.space.grid.GridFactoryFinder
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.relogo.BaseTurtle
 import repast.simphony.relogo.Observer;
 import repast.simphony.relogo.factories.LinkFactory;
 import repast.simphony.relogo.factories.ObserverFactory;
@@ -17,6 +20,8 @@ import repast.simphony.relogo.factories.PatchFactory;
 import repast.simphony.relogo.factories.RLWorldDimensions;
 import repast.simphony.relogo.factories.ReLogoWorldFactory;
 import repast.simphony.relogo.factories.TurtleFactory;
+import repast.simphony.space.gis.SimpleAdder
+import repast.simphony.space.grid.GridBuilderParameters
 import foodsimulationmodel.relogo.UserGlobalsAndPanelFactory;
 
 public class SimBuilder implements ContextBuilder {
@@ -28,7 +33,7 @@ public class SimBuilder implements ContextBuilder {
             ugpf.initialize(new JPanel());
             ugpf.addGlobalsAndPanelComponents();
         }
-		 
+		
 		Parameters p = RunEnvironment.getInstance().getParameters();
 		
 		// NOTE: minPxcor and minPycor must be <= 0
@@ -42,6 +47,10 @@ public class SimBuilder implements ContextBuilder {
 		TurtleFactory tf = new TurtleFactory(UserTurtle);
 		PatchFactory pf = new PatchFactory(UserPatch);		
 		ReLogoWorldFactory wf = new ReLogoWorldFactory(context,"default_observer_context", rLWorldDimensions, tf, pf, lf);
+		
+//		GridFactory gf = GridFactoryFinder.createGridFactory();
+//		GridBuilderParameters params = GridBuilderParameters.multiOccupancy2DTorus(new SimpleAdder<BaseTurtle>(), 10, 10)
+//		
 		
 		ObserverFactory oF = new ObserverFactory("default_observer",UserObserver,wf);
 		Observer dO = oF.createObserver();

@@ -13,6 +13,7 @@ import repast.simphony.relogo.UtilityG;
 class Retailer extends Person {
 	
 	public Retailer(){
+		type = "Retailer"
 		status = "selling"
 		for(int i = 0; i < 100; i++){
 			food.add(new Meat())

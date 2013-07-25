@@ -24,6 +24,7 @@ class Distributor extends Person {
 	def itemLoadTimeLeft = itemLoadTime
 	
 	public Distributor(){
+		type = "Distributor"
 		status = "driving"
 		workHours = 450;
 		workHoursLeft = workHours;
