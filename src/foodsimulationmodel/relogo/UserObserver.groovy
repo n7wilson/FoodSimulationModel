@@ -150,7 +150,7 @@ class UserObserver extends BaseObserver{
 				setPref()
 			}
 		}
-		if(tick % 10 == 0){
+		if(tick % 3 == 0){
 			WriteToFile()
 		}
 	}
@@ -179,13 +179,12 @@ class UserObserver extends BaseObserver{
 			writer.createNewFile()
 		}
 		
-		writer.append("type,xcor,ycor,id\n")
 		
 		for(Person p:persons()){
 			writer.append(p.type + "," + p.getXcor() + "," + p.getYcor() + "," + p.getWho() + "\n")
 		}
 		for(Work workplace: works()){
-			writer.append("Work," + workplace.getXcor() + "," + workplace.getYcor() + "," + workplace.getWho() + "\n")
+			writer.append("Work," + workplace.getXcor() + "," + workplace.getYcor() + "," + workplace.getWho())
 		}
 		filenum++
 	}

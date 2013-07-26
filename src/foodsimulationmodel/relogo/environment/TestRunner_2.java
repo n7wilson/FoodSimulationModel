@@ -3,6 +3,7 @@ package foodsimulationmodel.relogo.environment;
 import java.io.File;
 
 import repast.simphony.batch.BatchScenarioLoader;
+import repast.simphony.context.Context;
 import repast.simphony.engine.controller.Controller;
 import repast.simphony.engine.controller.DefaultController;
 import repast.simphony.engine.environment.AbstractRunner;
@@ -11,8 +12,10 @@ import repast.simphony.engine.environment.DefaultRunEnvironmentBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunEnvironmentBuilder;
 import repast.simphony.engine.environment.RunState;
+import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.BoundParameters;
 import repast.simphony.parameter.DefaultParameters;
 import repast.simphony.parameter.Parameters;
@@ -23,6 +26,7 @@ public class TestRunner_2 extends AbstractRunner {
 
 	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(TestRunner_2.class);
 
+	private RunState currentRunState = null;
 	private RunEnvironmentBuilder runEnvironmentBuilder;
 	protected Controller controller;
 	protected boolean pause = false;
@@ -51,20 +55,21 @@ public class TestRunner_2 extends AbstractRunner {
 
 		controller.batchInitialize();
 		controller.runParameterSetters(null);
+		parameters = new BoundParameters(new DefaultParameters());
 	}
 
 
 	
 	public void runInitialize(){
-	((DefaultParameters) parameters).addParameter("randomSeed", "Default Random Seed", int.class, 914509816, false);
-	((DefaultParameters) parameters).addParameter("default_observer_maxPxcor", "Max X Coordinate", int.class, 16, false);
-	((DefaultParameters) parameters).addParameter("default_observer_maxPycor", "Max Y Coordinate", int.class, 16, false);
-	((DefaultParameters) parameters).addParameter("default_observer_minPxcor", "Min X Coordinate", int.class, -16, false);
-	((DefaultParameters) parameters).addParameter("default_observer_minPycor", "Min Y Coordinate", int.class, -16, false);
-	RunEnvironment.getInstance().setParameters(parameters);
-	Parameters param2 = RunEnvironment.getInstance().getParameters();
-	System.out.println(param2.getValue("default_observer_minPxcor"));
-    controller.runInitialize(parameters);
+		((DefaultParameters) parameters).addParameter("randomSeed", "Default Random Seed", int.class, 914509816, false);
+		((DefaultParameters) parameters).addParameter("default_observer_maxPxcor", "Max X Coordinate", int.class, 16, false);
+		((DefaultParameters) parameters).addParameter("default_observer_maxPycor", "Max Y Coordinate", int.class, 16, false);
+		((DefaultParameters) parameters).addParameter("default_observer_minPxcor", "Min X Coordinate", int.class, -16, false);
+		((DefaultParameters) parameters).addParameter("default_observer_minPycor", "Min Y Coordinate", int.class, -16, false);
+		RunEnvironment.getInstance().setParameters(parameters);
+		Parameters param2 = RunEnvironment.getInstance().getParameters();
+		System.out.println(param2.getValue("default_observer_minPxcor"));
+	    currentRunState = controller.runInitialize(parameters);
 		schedule = RunState.getInstance().getScheduleRegistry().getModelSchedule();
 	}
 
@@ -104,6 +109,15 @@ public class TestRunner_2 extends AbstractRunner {
 	public void setFinishing(boolean fin){
 		schedule.setFinishing(fin);
 	}
+	
+	public Context getContext(){
+		return currentRunState.getMasterContext();
+	}
+	
+	public void scheduleAction(ScheduleParameters params, IAction action){
+		schedule.schedule(params, action);
+	}
+	
 
 	public void execute(RunState toExecuteOn) {
 		// required AbstractRunner stub.  We will control the
