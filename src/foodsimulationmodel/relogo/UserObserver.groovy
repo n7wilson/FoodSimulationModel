@@ -46,9 +46,14 @@ class UserObserver extends BaseObserver{
 			setWork()
 			setOrigin()
 		}
-		setDefaultShape(Producer, "farm")
-		createProducers(10){
+		setDefaultShape(SmallFarm, "farm")
+		createSmallFarms(3){
 			setxy(randomXcor(), randomYcor())
+		}
+		setDefaultShape(LargeFarm, "farm")
+		createLargeFarms(7){
+			setxy(randomXcor(), randomYcor())
+			size = 2
 		}
 		setDefaultShape(Distributor, "truck")
 		createDistributors(10){
