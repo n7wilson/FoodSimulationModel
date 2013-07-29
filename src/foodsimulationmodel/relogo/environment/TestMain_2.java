@@ -2,6 +2,10 @@ package foodsimulationmodel.relogo.environment;
 
 import java.io.File;
 
+import repast.simphony.engine.schedule.AbstractAction;
+import repast.simphony.engine.schedule.Frequency;
+import repast.simphony.engine.schedule.ScheduleParameters;
+
 public class TestMain_2 {
 
 	public static void main(String[] args){
@@ -24,6 +28,10 @@ public class TestMain_2 {
 			runner.runInitialize();  // initialize the run
 
 //			RunEnvironment.getInstance().endAt(endTime);
+			
+			AbstractAction action = new SimulationAction(ScheduleParameters.createRepeating(0, 1), runner.getContext());
+			
+			runner.scheduleAction(ScheduleParameters.createRepeating(0, 1), action);
 
 			while (runner.getActionCount() > 0){  // loop until last action is left
 				if (runner.getModelActionCount() == 0) {

@@ -10,7 +10,11 @@
     <string>SettingsFileName</string>
     <string>Repast.settings</string>
     <string>LastLoadedScenario</string>
+<<<<<<< HEAD
     <string>C:\RepastSimphony-2.0\workspace\FoodSimulationModel\FoodSimulationModel.rs</string>
+=======
+    <string>/Users/nathanwilson/Documents/workspace/FoodSimulationModel/FoodSimulationModel.rs</string>
+>>>>>>> 39ccdb5503b882b34b35f8fc319aa82a6fed7d4a
     <string>SettingsRegistryId</string>
     <string>Repast.registry</string>
   </hashtable>
