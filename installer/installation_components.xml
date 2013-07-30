@@ -99,6 +99,7 @@
             <!-- User Model components -->
             <file src="$StagingArea/installer/start_model.bat" targetdir="$INSTALL_PATH"/>
             <file src="$StagingArea/installer/start_model.command" targetdir="$INSTALL_PATH"/>
+            <file src="$StagingArea/installer/start_model_noGUI.command" targetdir="$INSTALL_PATH"/>
             <file src="$StagingArea" targetdir="$INSTALL_PATH"/>
             
             <!-- Groovy Library -->

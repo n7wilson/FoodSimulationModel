@@ -65,6 +65,7 @@
 		</copy>
 
 		<chmod perm="+x" file="${StagingArea}/installer/start_model.command" />
+		<chmod perm="+x" file="${StagingArea}/installer/start_model_noGUI.command" />
 
 
 		<copy file="installer/installation_components.xml" tofile="${StagingArea}/installation_components_temp.xml" />

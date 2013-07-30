@@ -28,6 +28,7 @@ public class TestRunner_2 extends AbstractRunner {
 
 	private RunState currentRunState = null;
 	private RunEnvironmentBuilder runEnvironmentBuilder;
+	private RunEnvironment runEnvironment;
 	protected Controller controller;
 	protected boolean pause = false;
 	protected Object monitor = new Object();
@@ -37,7 +38,19 @@ public class TestRunner_2 extends AbstractRunner {
 
 	public TestRunner_2() {
 		runEnvironmentBuilder = new DefaultRunEnvironmentBuilder(this, true);
+		if(runEnvironmentBuilder == null){
+			System.out.println("Environment is null");
+		}
+		else{
+			System.out.println("Environment not null");
+		}
 		controller = new DefaultController(runEnvironmentBuilder);
+		if(controller == null){
+			System.out.println("controller is null");
+		}
+		else{
+			System.out.println("controller not null");
+		}
 		controller.setScheduleRunner(this);
 		parameters = new BoundParameters(new DefaultParameters());
 	}
@@ -48,6 +61,7 @@ public class TestRunner_2 extends AbstractRunner {
 			ControllerRegistry registry = loader.load(runEnvironmentBuilder);
 			controller.setControllerRegistry(registry);
 		} else {
+			System.out.println("Directory not found");
 			msgCenter.error("Scenario not found", new IllegalArgumentException(
 					"Invalid scenario " + scenarioDir.getAbsolutePath()));
 			return;
@@ -66,11 +80,13 @@ public class TestRunner_2 extends AbstractRunner {
 		((DefaultParameters) parameters).addParameter("default_observer_maxPycor", "Max Y Coordinate", int.class, 16, false);
 		((DefaultParameters) parameters).addParameter("default_observer_minPxcor", "Min X Coordinate", int.class, -16, false);
 		((DefaultParameters) parameters).addParameter("default_observer_minPycor", "Min Y Coordinate", int.class, -16, false);
-		RunEnvironment.getInstance().setParameters(parameters);
-		Parameters param2 = RunEnvironment.getInstance().getParameters();
-		System.out.println(param2.getValue("default_observer_minPxcor"));
+		runEnvironment = runEnvironmentBuilder.createRunEnvironment();
+		runEnvironment = runEnvironmentBuilder.createRunEnvironment();
+		
+		runEnvironment.setParameters(parameters);
+		currentRunState = RunState.init();
 	    currentRunState = controller.runInitialize(parameters);
-		schedule = RunState.getInstance().getScheduleRegistry().getModelSchedule();
+		schedule = currentRunState.getScheduleRegistry().getModelSchedule();
 	}
 
 	public void cleanUpRun(){
@@ -82,7 +98,7 @@ public class TestRunner_2 extends AbstractRunner {
 
 	// returns the tick count of the next scheduled item
 	public double getNextScheduledTime(){
-		return ((Schedule)RunEnvironment.getInstance().getCurrentSchedule()).peekNextAction().getNextTime();
+		return ((Schedule)runEnvironment.getCurrentSchedule()).peekNextAction().getNextTime();
 	}
 
 	// returns the number of model actions on the schedule
@@ -115,7 +131,12 @@ public class TestRunner_2 extends AbstractRunner {
 	}
 	
 	public void scheduleAction(ScheduleParameters params, IAction action){
+		if(schedule == null){
+			System.out.println("Schedule is null!"); 
+		}
+		else{
 		schedule.schedule(params, action);
+		}
 	}
 	
 
