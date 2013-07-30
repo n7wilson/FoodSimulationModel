@@ -38,19 +38,7 @@ public class TestRunner_2 extends AbstractRunner {
 
 	public TestRunner_2() {
 		runEnvironmentBuilder = new DefaultRunEnvironmentBuilder(this, true);
-		if(runEnvironmentBuilder == null){
-			System.out.println("Environment is null");
-		}
-		else{
-			System.out.println("Environment not null");
-		}
 		controller = new DefaultController(runEnvironmentBuilder);
-		if(controller == null){
-			System.out.println("controller is null");
-		}
-		else{
-			System.out.println("controller not null");
-		}
 		controller.setScheduleRunner(this);
 		parameters = new BoundParameters(new DefaultParameters());
 	}
@@ -84,7 +72,6 @@ public class TestRunner_2 extends AbstractRunner {
 		runEnvironment = runEnvironmentBuilder.createRunEnvironment();
 		
 		runEnvironment.setParameters(parameters);
-		currentRunState = RunState.init();
 	    currentRunState = controller.runInitialize(parameters);
 		schedule = currentRunState.getScheduleRegistry().getModelSchedule();
 	}
