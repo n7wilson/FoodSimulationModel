@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="assets"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
-	<classpathentry kind="con" path="REPAST_SIMPHONY_SUPPORT"/>
-	<classpathentry kind="lib" path="lib/commons-math3-3.2-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/commons-math3-3.2-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-math3-3.2-test-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-math3-3.2-tests.jar"/>
-	<classpathentry kind="lib" path="lib/commons-math3-3.2.jar"/>
+	<classpathentry exported="true" kind="con" path="REPAST_SIMPHONY_SUPPORT"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-math3-3.2-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-math3-3.2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-math3-3.2-test-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-math3-3.2-tests.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-math3-3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/eventbus.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/gluegen-rt.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/j-ogg-oggd.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/j-ogg-vorbisd.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jbullet.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jglfont-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jinput.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-blender.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-desktop.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-effects.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-jbullet.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-jogg.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-lwjgl-natives.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-lwjgl.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-networking.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-niftygui.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-openal-soft-natives-android.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-plugins.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-terrain.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jME3-testdata.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/joal.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/jogl-all.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/lwjgl.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/nifty-default-controls.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/nifty-examples.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/nifty-style-black.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/nifty.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/stack-alloc.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/vecmath.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nathanwilson/Documents/Code/lib/xmlpull-xpp3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

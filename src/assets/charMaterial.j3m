@@ -1,0 +1,24 @@
+Material My Material : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        GlowColor : 0 0 0 01.0
+        ColorRamp : Textures/char.png
+        VertexLighting : false
+        VTangent : false
+        HighQuality : true
+        LATC : false
+        UseAlpha : false
+        Minnaert : false
+        UseVertexColor : false
+        SteepParallax : false
+        UseMaterialColors : false
+        PackedNormalParallax : false
+        EnvMapAsSphereMap : false
+        SeparateTexCoord : false
+        HardwareShadows : false
+        WardIso : false
+        ShadowMapSize : 0.0
+        Shininess : 30.0
+     }
+    AdditionalRenderState {
+    }
+}
