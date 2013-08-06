@@ -69,7 +69,6 @@ public class TestRunner_2 extends AbstractRunner {
 		((DefaultParameters) parameters).addParameter("default_observer_minPxcor", "Min X Coordinate", int.class, -16, false);
 		((DefaultParameters) parameters).addParameter("default_observer_minPycor", "Min Y Coordinate", int.class, -16, false);
 		runEnvironment = runEnvironmentBuilder.createRunEnvironment();
-		runEnvironment = runEnvironmentBuilder.createRunEnvironment();
 		
 		runEnvironment.setParameters(parameters);
 	    currentRunState = controller.runInitialize(parameters);

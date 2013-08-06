@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import java.util.List;
 
@@ -49,19 +50,20 @@ import foodsimulationmodel.relogo.agents.Consumer;
 import foodsimulationmodel.relogo.agents.Distributor
 import foodsimulationmodel.relogo.agents.Producer
 import foodsimulationmodel.relogo.agents.Retailer
+import foodsimulationmodel.relogo.UserObserver
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
 import foodsimulationmodel.relogo.environment.Work;
 import repast.simphony.relogo.AgentSet
 import repast.simphony.relogo.BaseObserver;
+import repast.simphony.relogo.Observer;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 
 public class TestMain_2 extends SimpleApplication{
 	private String baseDir = "";
-	
-	private AgentSet test = consumers();
+	private static UserObserver ob;
 
 	public static void main(String[] args){
 
@@ -75,8 +77,19 @@ public class TestMain_2 extends SimpleApplication{
 			e.printStackTrace();
 		}
 		
-		TestMain_2 app = new TestMain_2();
-		app.start();
+		runner.runInitialize();  // initialize the run
+		
+		Iterator itr = runner.context.iterator();
+		while(itr.hasNext()){
+			Object next = itr.next();
+			if(next.getClass() == UserObserver.class){
+				ob = (UserObserver) next;
+			}
+		}
+		
+		
+		//TestMain_2 app = new TestMain_2();
+		//app.start();
 		
 
 //		double endTime = 1000.0;  // some arbitrary end time
@@ -84,7 +97,6 @@ public class TestMain_2 extends SimpleApplication{
 		// Run the sim a few times to check for cleanup and init issues.
 		for(int i=0; i<1; i++){
 
-			runner.runInitialize();  // initialize the run
 
 //			RunEnvironment.getInstance().endAt(endTime);
 			
@@ -151,7 +163,6 @@ public class TestMain_2 extends SimpleApplication{
         
 
      
-		AgentSet test = consumers();
     
 
     Spatial S;                                                                  //create a spatial (object that takes up space) called S
