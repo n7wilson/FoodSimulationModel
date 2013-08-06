@@ -87,9 +87,8 @@ public class TestMain_2 extends SimpleApplication{
 			}
 		}
 		
-		
-		//TestMain_2 app = new TestMain_2();
-		//app.start();
+		TestMain_2 app = new TestMain_2();
+		app.start();
 		
 
 //		double endTime = 1000.0;  // some arbitrary end time
@@ -168,7 +167,7 @@ public class TestMain_2 extends SimpleApplication{
     Spatial S;                                                                  //create a spatial (object that takes up space) called S
  
 
-        for(Work w: works()){
+        for(Work w: ob.works()){
 
              
 
@@ -178,7 +177,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.rotate(0.0f, -3.0f, 0.0f);
 
-        S.setLocalTranslation(w.getXcor*6,1.0f,w.getYcor*6);//set its initial position
+        S.setLocalTranslation((Float)w.getXcor()*6,1.0f,(Float)w.getYcor()*6);//set its initial position
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/workMaterial.j3m"));
 			
@@ -191,7 +190,7 @@ public class TestMain_2 extends SimpleApplication{
 
         
 
-        for(Retailer r: retailers()){
+        for(Retailer r: ob.retailers()){
 
             
 
@@ -203,7 +202,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.rotate(0.0f, -3.0f, 0.0f);                                            //rotate that spatial!
 
-        S.setLocalTranslation(r.getXcor*6,1.0f,r.getYcor*6);
+        S.setLocalTranslation((Float)r.getXcor()*6,1.0f,(Float)r.getYcor()*6);
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/retMaterial.j3m"));
 			
@@ -212,7 +211,7 @@ public class TestMain_2 extends SimpleApplication{
 
         
 
-        for(Distributor d: distributors()){
+        for(Distributor d: ob.distributors()){
 
              
 
@@ -222,7 +221,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.rotate(0.0f, -3.0f, 0.0f);
 
-        S.setLocalTranslation(d.getXcor*6,1.0f,d.getYcor*6);
+        S.setLocalTranslation((Float)d.getXcor()*6,1.0f,(Float)d.getYcor()*6);
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/disMaterial.j3m"));
 			
@@ -231,7 +230,7 @@ public class TestMain_2 extends SimpleApplication{
 
         
 
-        for(Producer p: producers()){
+        for(Producer p: ob.producers()){
 
              
 
@@ -241,7 +240,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.rotate(0.0f, -3.0f, 0.0f);
 
-        S.setLocalTranslation(p.getXcor()*6,1.0f,p.getYcor()*6);
+        S.setLocalTranslation((Float)p.getXcor()*6,1.0f,(Float)p.getYcor()*6);
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/proMaterial.j3m"));
 			
@@ -250,7 +249,7 @@ public class TestMain_2 extends SimpleApplication{
 
         
 
-        for(Consumer c: consumers()){
+        for(Consumer c: ob.consumers()){
 
            
 
@@ -260,7 +259,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.rotate(0.0f, -3.0f, 0.0f);
 
-        S.setLocalTranslation(c.getXcor*6,1.0f,c.getYcor()*6);
+        S.setLocalTranslation((Float)c.getXcor()*6,1.0f,(Float)c.getYcor()*6);
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/charMaterial.j3m"));
 			
