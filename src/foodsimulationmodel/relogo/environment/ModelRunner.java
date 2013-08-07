@@ -22,9 +22,9 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.SweeperProducer;
 import simphony.util.messages.MessageCenter;
 
-public class TestRunner_2 extends AbstractRunner {
+public class ModelRunner extends AbstractRunner {
 
-	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(TestRunner_2.class);
+	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(ModelRunner.class);
 
 	private RunState currentRunState = null;
 	private RunEnvironmentBuilder runEnvironmentBuilder;
@@ -36,7 +36,7 @@ public class TestRunner_2 extends AbstractRunner {
 	private ISchedule schedule;
 	protected Parameters parameters;
 
-	public TestRunner_2() {
+	public ModelRunner() {
 		runEnvironmentBuilder = new DefaultRunEnvironmentBuilder(this, true);
 		controller = new DefaultController(runEnvironmentBuilder);
 		controller.setScheduleRunner(this);

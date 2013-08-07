@@ -102,7 +102,7 @@ public class Main extends SimpleApplication {                                   
 
         
 
-        Spatial R = assetManager.loadModel("assets/myTerrain.j3o");             //adds a terrain to the scene. You can make your own terrains in the terrain 
+        Spatial R = assetManager.loadModel("Textures/myTerrain.j3o");             //adds a terrain to the scene. You can make your own terrains in the terrain 
 
                                                                                 //builder
 
@@ -150,7 +150,7 @@ public class Main extends SimpleApplication {                                   
 
              
 
-        S = assetManager.loadModel("assets/building1.mesh.xml");                //give the spatial S a model. In this case a building model.
+        S = assetManager.loadModel("Textures/building1.mesh.xml");                //give the spatial S a model. In this case a building model.
 
         S.scale(5f);
 

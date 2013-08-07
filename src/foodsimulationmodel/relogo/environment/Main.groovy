@@ -61,7 +61,7 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 
-public class TestMain_2 extends SimpleApplication{
+public class Main extends SimpleApplication{
 	private String baseDir = "";
 	private static UserObserver ob;
 
@@ -69,7 +69,7 @@ public class TestMain_2 extends SimpleApplication{
 
 		File file = new File(args[0]); // the scenario dir
 
-		TestRunner_2 runner = new TestRunner_2();
+		ModelRunner runner = new ModelRunner();
 
 		try {
 			runner.load(file);     // load the repast scenario
@@ -87,33 +87,26 @@ public class TestMain_2 extends SimpleApplication{
 			}
 		}
 		
-		TestMain_2 app = new TestMain_2();
+		Main app = new Main();
 		app.start();
-		
-
-//		double endTime = 1000.0;  // some arbitrary end time
-
-		// Run the sim a few times to check for cleanup and init issues.
-		for(int i=0; i<1; i++){
 
 
-//			RunEnvironment.getInstance().endAt(endTime);
+//		RunEnvironment.getInstance().endAt(endTime);
 			
-			AbstractAction action = new SimulationAction(ScheduleParameters.createRepeating(0, 1), runner.getContext());
+		AbstractAction action = new SimulationAction(ScheduleParameters.createRepeating(0, 1), runner.getContext());
 			
-			runner.scheduleAction(ScheduleParameters.createRepeating(0, 1), action);
+		runner.scheduleAction(ScheduleParameters.createRepeating(0, 1), action);
 
-			while (runner.getActionCount() > 0){  // loop until last action is left
-				if (runner.getModelActionCount() == 0) {
-					runner.setFinishing(true);
-				}
-				runner.step();  // execute all scheduled actions at next tick
-
+		while (runner.getActionCount() > 0){  // loop until last action is left
+			if (runner.getModelActionCount() == 0) {
+				runner.setFinishing(true);
 			}
+			runner.step();  // execute all scheduled actions at next tick
 
-			runner.stop();          // execute any actions scheduled at run end
-			runner.cleanUpRun();
 		}
+
+		runner.stop();          // execute any actions scheduled at run end
+		runner.cleanUpRun();
 		runner.cleanUpBatch();    // run after all runs complete
 	}
 
@@ -137,7 +130,7 @@ public class TestMain_2 extends SimpleApplication{
 
         
 
-        Spatial R = assetManager.loadModel(baseDir + "assets/myTerrain.j3o");             //adds a terrain to the scene. You can make your own terrains in the terrain 
+        Spatial R = assetManager.loadModel(baseDir + "Textures/myTerrain.j3o");             //adds a terrain to the scene. You can make your own terrains in the terrain 
 
                                                                                 //builder
 
@@ -171,7 +164,7 @@ public class TestMain_2 extends SimpleApplication{
 
              
 
-        S = assetManager.loadModel(baseDir + "assets/building1.mesh.xml");                //give the spatial S a model. In this case a building model.
+        S = assetManager.loadModel(baseDir + "Textures/building1.mesh.xml");                //give the spatial S a model. In this case a building model.
 
         S.scale(5f);
 
@@ -179,7 +172,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.setLocalTranslation((Float)w.getXcor()*6,1.0f,(Float)w.getYcor()*6);//set its initial position
 
-            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/workMaterial.j3m"));
+            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/workMaterial.j3m"));
 			
 			rootNode.attachChild(S);
 			}//set its material. material is basically how the surface of the
@@ -194,7 +187,7 @@ public class TestMain_2 extends SimpleApplication{
 
             
 
-        S = assetManager.loadModel(baseDir + "assets/retailer1.mesh.xml");
+        S = assetManager.loadModel(baseDir + "Textures/retailer1.mesh.xml");
 
         S.scale(5f);                                                            //scale it in size. you can also say S.scale(1f, 2f, 3f) to be more specific 
 
@@ -204,7 +197,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.setLocalTranslation((Float)r.getXcor()*6,1.0f,(Float)r.getYcor()*6);
 
-            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/retMaterial.j3m"));
+            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/retMaterial.j3m"));
 			
 			rootNode.attachChild(S);
 			}
@@ -215,7 +208,7 @@ public class TestMain_2 extends SimpleApplication{
 
              
 
-        S = assetManager.loadModel(baseDir + "assets/distributor1.mesh.xml");
+        S = assetManager.loadModel(baseDir + "Textures/distributor1.mesh.xml");
 
         S.scale(5f);
 
@@ -223,7 +216,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.setLocalTranslation((Float)d.getXcor()*6,1.0f,(Float)d.getYcor()*6);
 
-            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/disMaterial.j3m"));
+            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/disMaterial.j3m"));
 			
 			rootNode.attachChild(S);
 			}
@@ -234,7 +227,7 @@ public class TestMain_2 extends SimpleApplication{
 
              
 
-        S = assetManager.loadModel(baseDir + "assets/producer.mesh.xml");
+        S = assetManager.loadModel(baseDir + "Textures/producer.mesh.xml");
 
         S.scale(5f);
 
@@ -242,7 +235,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.setLocalTranslation((Float)p.getXcor()*6,1.0f,(Float)p.getYcor()*6);
 
-            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/proMaterial.j3m"));
+            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/proMaterial.j3m"));
 			
 			rootNode.attachChild(S);
 			}
@@ -253,7 +246,7 @@ public class TestMain_2 extends SimpleApplication{
 
            
 
-        S = assetManager.loadModel(baseDir + "assets/agent007.mesh.xml");
+        S = assetManager.loadModel(baseDir + "Textures/agent007.mesh.xml");
 
         S.scale(5f);
 
@@ -261,7 +254,7 @@ public class TestMain_2 extends SimpleApplication{
 
         S.setLocalTranslation((Float)c.getXcor()*6,1.0f,(Float)c.getYcor()*6);
 
-            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "assets/charMaterial.j3m"));
+            S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/charMaterial.j3m"));
 			
 			rootNode.attachChild(S);
 			}
