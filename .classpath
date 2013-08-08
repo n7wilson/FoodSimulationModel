@@ -37,5 +37,14 @@
 	<classpathentry exported="true" kind="lib" path="lib/stack-alloc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xmlpull-xpp3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jME3-bullet-natives-android.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jME3-bullet-natives.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jME3-bullet.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/launch4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/nifty-default-controls-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/nifty-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/proguard.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/retrace.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xstream.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
