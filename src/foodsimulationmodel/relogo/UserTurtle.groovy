@@ -10,5 +10,17 @@ import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 
 class UserTurtle extends BaseTurtle{
-
+	protected static int uniqueID = 0
+	private String id
+	public void setIdentifier(String id){
+		this.id = id
+	}
+	public String getIdentifier(){
+		return this.id
+	}
+	
+	public UserTurtle(){
+		id = uniqueID.toString()
+		uniqueID++
+	}
 }

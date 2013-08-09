@@ -34,15 +34,15 @@ public class SimulationAction extends AbstractAction {
 
 	@Override
 	public void execute() {
+		if(!isSetup){
+			((UserObserver) ob).setup();
+			isSetup = true;
+		}
 		if(ob == null){
 			System.out.println("Observer not found");
 		}
 		else{
 			((UserObserver) ob).go();
-		}
-		if(!isSetup){
-			((UserObserver) ob).setup();
-			isSetup = true;
 		}
 	}
 

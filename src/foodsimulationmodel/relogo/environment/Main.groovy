@@ -19,6 +19,8 @@ import com.jme3.scene.Spatial;
 
 import com.jme3.scene.shape.Box;
 
+import com.jme3.scene.Node;
+
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -43,6 +45,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 
 import java.util.logging.Logger;
+import repast.simphony.context.Context
 import repast.simphony.engine.schedule.AbstractAction;
 import repast.simphony.engine.schedule.Frequency;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -79,7 +82,14 @@ public class Main extends SimpleApplication{
 		
 		runner.runInitialize();  // initialize the run
 		
-		Iterator itr = runner.context.iterator();
+		ContextManager manager = new ContextManager();
+		Context context = manager.build(runner.getContext());
+		
+		runner.setContext(context);
+		
+		
+		// get a reference to the UserObserver used for the simulation run
+		Iterator itr = runner.getContext().iterator();
 		while(itr.hasNext()){
 			Object next = itr.next();
 			if(next.getClass() == UserObserver.class){
@@ -159,7 +169,9 @@ public class Main extends SimpleApplication{
 
     Spatial S;                                                                  //create a spatial (object that takes up space) called S
  
-
+		Node workNode = new Node("work")
+		rootNode.attachChild(workNode)	
+	
         for(Work w: ob.works()){
 
              
@@ -174,14 +186,15 @@ public class Main extends SimpleApplication{
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/workMaterial.j3m"));
 			
-			rootNode.attachChild(S);
+			workNode.attachChild(S);
 			}//set its material. material is basically how the surface of the
 
                                                                                             //model acts. It defines things like its colour in light, colour in
 
                                                                                             //darkness. the colour of glare it gives off. etc. 
 
-        
+       Node retailerNode = new Node("retailer")
+	   rootNode.attachChild(retailerNode) 
 
         for(Retailer r: ob.retailers()){
 
@@ -199,10 +212,11 @@ public class Main extends SimpleApplication{
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/retMaterial.j3m"));
 			
-			rootNode.attachChild(S);
+			retailerNode.attachChild(S);
 			}
 
-        
+        Node distributorNode = new Node("distributor")
+		rootNode.attachChild(distributorNode)
 
         for(Distributor d: ob.distributors()){
 
@@ -218,10 +232,11 @@ public class Main extends SimpleApplication{
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/disMaterial.j3m"));
 			
-			rootNode.attachChild(S);
+			distributorNode.attachChild(S);
 			}
 
-        
+        producerNode = new Node("producer")
+		rootNode.attachChild(producerNode)
 
         for(Producer p: ob.producers()){
 
@@ -237,11 +252,12 @@ public class Main extends SimpleApplication{
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/proMaterial.j3m"));
 			
-			rootNode.attachChild(S);
+			producerNode.attachChild(S);
 			}
 
-        
-
+        consumerNode = new Node("consumer")
+		rootNode.attachChild(consumerNode)
+		
         for(Consumer c: ob.consumers()){
 
            
@@ -256,7 +272,7 @@ public class Main extends SimpleApplication{
 
             S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/charMaterial.j3m"));
 			
-			rootNode.attachChild(S);
+			consumerNode.attachChild(S);
 			}
     }
 
@@ -266,23 +282,7 @@ public class Main extends SimpleApplication{
 
     public void simpleUpdate(float tpf) { //this is where all the code for actually running the game goes. the function gets called once a frame. 
 
-     /*  b +=1;
-
-       
-
-       for(int i = 0; i < 36; i++){
-
-           
-
-           float xmove = (float) (timestep[(b-1)%frames][i][1]-timestep[(b)%frames][i][1]);
-
-           float zmove =  (float)(timestep[(b-1)%frames][i][2]-timestep[(b)%frames][i][2]);
-
-            agents[i].move(xmove, 0f, zmove);
-
-        
-
-    }*/
+     	
 
     }
 

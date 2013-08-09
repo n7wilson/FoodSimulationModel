@@ -15,6 +15,8 @@ class UserObserver extends BaseObserver{
 	def tick = 0
 	def environment = new Environment()
 	def filenum = 0
+	def numRetailers = 20
+	def numConsumers = 50
 	
 	/*Outside Parameters Referenced:
 	 * numConsumers - number of Consumers to create

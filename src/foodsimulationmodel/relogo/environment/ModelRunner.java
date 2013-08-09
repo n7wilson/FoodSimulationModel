@@ -116,6 +116,10 @@ public class ModelRunner extends AbstractRunner {
 		return currentRunState.getMasterContext();
 	}
 	
+	public void setContext(Context context){
+		currentRunState.setMasterContext(context);
+	}
+	
 	public void scheduleAction(ScheduleParameters params, IAction action){
 		if(schedule == null){
 			System.out.println("Schedule is null!"); 
