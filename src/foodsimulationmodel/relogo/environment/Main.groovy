@@ -235,7 +235,7 @@ public class Main extends SimpleApplication{
 			distributorNode.attachChild(S);
 			}
 
-        producerNode = new Node("producer")
+        Node producerNode = new Node("producer")
 		rootNode.attachChild(producerNode)
 
         for(Producer p: ob.producers()){
@@ -255,7 +255,7 @@ public class Main extends SimpleApplication{
 			producerNode.attachChild(S);
 			}
 
-        consumerNode = new Node("consumer")
+        Node consumerNode = new Node("consumer")
 		rootNode.attachChild(consumerNode)
 		
         for(Consumer c: ob.consumers()){

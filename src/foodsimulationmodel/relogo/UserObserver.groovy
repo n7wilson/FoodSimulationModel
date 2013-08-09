@@ -41,11 +41,16 @@ class UserObserver extends BaseObserver{
 		}
 		setDefaultShape(Consumer, "person")
 		createConsumers(numConsumers){
-			setxy(randomXcor(), randomYcor())
+			def xcor = randomXcor()
+			def ycor = randomYcor()
+			setxy(xcor, ycor)
 			//set the Consumer's starting store, the Consumer's work place 
 			//and the location of the Consumer's home
 			setStore()
 			setWork()
+			createHomes(1){
+				setxy(xcor,ycor)
+			}
 			setOrigin()
 		}
 		setDefaultShape(SmallFarm, "farm")

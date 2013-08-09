@@ -4,6 +4,8 @@ import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
 
 import com.sun.org.apache.bcel.internal.generic.RETURN;
+import com.vividsolutions.jts.geom.Coordinate
+import foodsimulationmodel.pathmapping.Route
 
 
 import repast.simphony.relogo.BasePatch;
@@ -22,6 +24,7 @@ class Distributor extends Person {
 	//How long it takes to load 1 item
 	def itemLoadTime = 4
 	def itemLoadTimeLeft = itemLoadTime
+	Route route = null
 	
 	public Distributor(){
 		type = "Distributor"
@@ -42,8 +45,7 @@ class Distributor extends Person {
 		}
 		switch(status){
 			case "driving":
-				face(destination)
-				forward(speed)
+				route.travel()
 				if(distance(destination) < speed){
 					status = "loading"
 					loadingTimeLeft = loadingTime
@@ -89,6 +91,7 @@ class Distributor extends Person {
 		else{
 			destination = minOneOf(retailers()){it.food.size}
 		}
+		route = new Route(this, new Coordinate(destination.getXcor(), destination.getYcor()), destination)
 	}
 	
 	//Move Food between the Distributor and its destination

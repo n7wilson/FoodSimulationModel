@@ -65,7 +65,7 @@ public abstract class GlobalVars {
 			MEDIUM(0.001,"110"),
 			/** Largest buffer, approximately 550m. I use this when doing things that
 			 * don't need to be done often, like populating caches.*/
-			LARGE(0.005,"550");
+			LARGE(5000,"550");
 			/**
 			 * @param dist The distance to be passed to the search function (in lat/long?)
 			 * @param distInMeters An approximate equivalent distance in meters.

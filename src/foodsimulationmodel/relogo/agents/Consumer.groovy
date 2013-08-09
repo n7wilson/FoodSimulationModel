@@ -3,12 +3,16 @@ package foodsimulationmodel.relogo.agents;
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
 
+import com.vividsolutions.jts.geom.Coordinate
+import foodsimulationmodel.pathmapping.Route
+import foodsimulationmodel.relogo.environment.Work
 import foodsimulationmodel.relogo.food.*
 import java.util.List;
 
 import repast.simphony.relogo.AgentSet
 import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.BaseTurtle;
+import repast.simphony.relogo.Patch
 import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
@@ -17,15 +21,17 @@ import repast.simphony.relogo.UtilityG;
 class Consumer extends Person {
 	def generator = new Random()
 	//Reference for next store the Consumer will buy food from
-	def store = null
+	Retailer store = null
 	//Consumer's house
-	def origin = null
+	Home origin = null
 	//Consumer's work
-	def work = null
+	Work work = null
 	//Threshold at which Consumer gets hungry and must eat food
 	def hungerMin = 500
 	//Money made from working (per tick)
 	def salary = 30
+	//Route the Consumer is following
+	Route route = null
 	
 	public Consumer(){
 		type = "Consumer"
@@ -36,14 +42,16 @@ class Consumer extends Person {
 		store = minOneOf(retailers()){this.distance(it)}
 	}
 	
-	def setOrigin(){
-		origin = patchHere()
-	}
 	
 	//Default way of setting the Consumer's work location.
 	//If more than one work location is added then should be modified
 	def setWork(){
 		work = work(0)
+		route = new Route(this, new Coordinate(work.getXcor(),work.getYcor()), work)
+	}
+	
+	def setOrigin(){
+		origin = homesOn(patchHere()).get(0)
 	}
 	
 	
@@ -58,11 +66,13 @@ class Consumer extends Person {
 				status = "hungry"
 				def filteredRet = retailers().with({it.food.size != 0})
 				store = minOneOf(filteredRet){this.distance(it)}
+				route = new Route(this, new Coordinate(store.getXcor(),store.getYcor()),store)
 			}
 		}
 		//if the Consumer still needs to work this is next priority
-		else if(workHoursLeft > 0){
+		else if(workHoursLeft > 0 && status != "working"){
 			status = "working"
+			new Route(this, new Coordinate(work.getXcor(),work.getYcor()), work)
 		}
 		
 		//if the Consumer is unhealthy, needs to change lifestyle
@@ -82,7 +92,7 @@ class Consumer extends Person {
 				//if the Consumer doesn't have any food with them then go to the store
 				if(food.empty){
 					if(notAtLocation(store)){
-						moveTowards(store) 
+						move() 
 					}
 					//if the Consumer is at the store then buy an item of food based on preferences
 					else{
@@ -94,12 +104,13 @@ class Consumer extends Person {
 				else{
 					eat()
 					status = "normal"
+					route = new Route(this, new Coordinate(origin.getXcor(), origin.getYcor()),origin)
 				}
 				break
 			case "working":
 				//go to work if not there already
 				if(notAtLocation(work)){
-					moveTowards(work)
+					move()
 				}
 				//work and get paid
 				//TODO: possibly change pay to mirror pay in real life (given in bulk after a time period)
@@ -108,6 +119,7 @@ class Consumer extends Person {
 					addHealth(-2)
 					if(workHoursLeft <= 0){
 						status = "normal"
+					route = new Route(this, new Coordinate(origin.getXcor(), origin.getYcor()),origin)
 					}
 					//label = "working, energy: " + this.getEnergy()
 					this.addMoney(salary)
@@ -116,8 +128,7 @@ class Consumer extends Person {
 			default:
 				//if the Consumer doesn't have anything else to do go home
 				if(distance(origin) > speed){
-					face(origin)
-					forward(speed)
+					move()
 				}
 				else{
 					addHealth(1)
@@ -159,8 +170,7 @@ class Consumer extends Person {
 		return distance(agent) > speed
 	}
 	
-	def moveTowards(BaseTurtle agent){
-		face(agent)
-		forward(speed)
+	def move(){
+		route.travel()
 	}
 }
