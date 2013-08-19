@@ -186,7 +186,7 @@ class UserObserver extends BaseObserver{
 	
 	//Function for writing data to file
 	def WriteToFile(){
-		def writer = new File("FoodSimulationData/testdata" + filenum + ".csv")
+		/*def writer = new File("FoodSimulationData/testdata" + filenum + ".csv")
 		if(! writer.exists()){
 			writer.createNewFile()
 		}
@@ -198,7 +198,7 @@ class UserObserver extends BaseObserver{
 		for(Work workplace: works()){
 			writer.append("Work," + workplace.getXcor() + "," + workplace.getYcor() + "," + workplace.getWho())
 		}
-		filenum++
+		filenum++*/
 	}
 	
 
