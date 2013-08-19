@@ -10,19 +10,16 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.relogo.Observer;
 
 public class SimulationAction extends AbstractAction {
-	private boolean isSetup;
 	private Observer ob;
 	
 	
 	public SimulationAction(ScheduleParameters params) {
 		super(params);
-		isSetup = false;
 		// TODO Auto-generated constructor stub
 	}
 	
 	public SimulationAction(ScheduleParameters params, Context context) {
 		super(params);
-		isSetup = false;
 		Iterator itr = context.iterator();
 		while(itr.hasNext()){
 			Object next = itr.next();
@@ -34,10 +31,6 @@ public class SimulationAction extends AbstractAction {
 
 	@Override
 	public void execute() {
-		if(!isSetup){
-			((UserObserver) ob).setup();
-			isSetup = true;
-		}
 		if(ob == null){
 			System.out.println("Observer not found");
 		}

@@ -90,6 +90,8 @@ public class Main extends SimpleApplication{
 			if(next.getClass() == UserObserver.class){
 				ob = (UserObserver) next;}}
 		
+		ob.setup()
+		
 		Main app = new Main();
 		app.start();
 		
