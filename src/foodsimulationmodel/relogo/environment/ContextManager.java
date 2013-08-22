@@ -56,8 +56,13 @@ import foodsimulationmodel.pathmapping.NetworkEdge;
 import foodsimulationmodel.pathmapping.NetworkEdgeCreator;
 import foodsimulationmodel.pathmapping.Road;
 import foodsimulationmodel.pathmapping.SpatialIndexManager;
-import foodsimulationmodel.environment.contexts.JunctionContext;
-import foodsimulationmodel.environment.contexts.RoadContext;
+import foodsimulationmodel.relogo.agents.AgentFactory;
+import foodsimulationmodel.relogo.agents.IAgent;
+import foodsimulationmodel.relogo.agents.Producer;
+import foodsimulationmodel.relogo.agents.Retailer;
+import foodsimulationmodel.context.AgentContext;
+import foodsimulationmodel.context.JunctionContext;
+import foodsimulationmodel.context.RoadContext;
 import foodsimulationmodel.exceptions.AgentCreationException;
 import foodsimulationmodel.exceptions.EnvironmentError;
 import foodsimulationmodel.exceptions.NoIdentifierException;
@@ -69,7 +74,7 @@ public class ContextManager implements ContextBuilder<Object> {
 	 * A logger for this class. Note that there is a static block that is used to configure all logging for the model
 	 * (at the bottom of this file).
 	 */
-//	private static Logger LOGGER = Logger.getLogger(ContextManager.class.getName());
+	private static Logger LOGGER = Logger.getLogger(ContextManager.class.getName());
 
 	// Optionally force agent threading off (good for debugging)
 	private static final boolean TURN_OFF_THREADING = false;;
@@ -84,7 +89,6 @@ public class ContextManager implements ContextBuilder<Object> {
 
 	private static Context<Object> mainContext;
 
-	// building context and projection cab be public (thread safe) because buildings only queried
 
 	public static Context<Road> roadContext;
 	public static Geography<Road> roadProjection;
@@ -93,10 +97,12 @@ public class ContextManager implements ContextBuilder<Object> {
 	public static Geography<Junction> junctionGeography;
 	public static Network<Junction> roadNetwork;
 
+	public static Context<IAgent> agentContext;
+	public static Geography<IAgent> agentGeography;
 
 	@Override
 	public Context<Object> build(Context<Object> con) {
-		System.out.println("ContextManager initializing...");
+
 
 		// Keep a useful static link to the main context
 		mainContext = con;
@@ -113,9 +119,10 @@ public class ContextManager implements ContextBuilder<Object> {
 
 		// Configure the environment
 		String gisDataDir = ContextManager.getProperty(GlobalVars.GISDataDirectory);
-//		LOGGER.log(Level.FINE, "Configuring the environment with data from " + gisDataDir);
+		LOGGER.log(Level.FINE, "Configuring the environment with data from " + gisDataDir);
 
 		try {
+
 
 			// Create the Roads - context and geography
 			roadContext = new RoadContext();
@@ -126,7 +133,7 @@ public class ContextManager implements ContextBuilder<Object> {
 			GISFunctions.readShapefile(Road.class, roadFile, roadProjection, roadContext);
 			mainContext.addSubContext(roadContext);
 			SpatialIndexManager.createIndex(roadProjection, Road.class);
-//			LOGGER.log(Level.FINER, "Read " + roadContext.getObjects(Road.class).size() + " roads from " + roadFile);
+			LOGGER.log(Level.FINER, "Read " + roadContext.getObjects(Road.class).size() + " roads from " + roadFile);
 
 			// Create road network
 
@@ -151,20 +158,48 @@ public class ContextManager implements ContextBuilder<Object> {
 			testEnvironment();
 
 		} catch (MalformedURLException e) {
-//			LOGGER.log(Level.SEVERE, "", e);
+			LOGGER.log(Level.SEVERE, "", e);
 			return null;
 		} catch (EnvironmentError e) {
-//			LOGGER.log(Level.SEVERE, "There is an eror with the environment, cannot start simulation", e);
+			LOGGER.log(Level.SEVERE, "There is an eror with the environment, cannot start simulation", e);
 			return null;
 		} catch (NoIdentifierException e) {
-//			LOGGER.log(Level.SEVERE, "One of the input buildings had no identifier (this should be read"
-//					+ "from the 'identifier' column in an input GIS file)", e);
+			LOGGER.log(Level.SEVERE, "One of the input buildings had no identifier (this should be read"
+					+ "from the 'identifier' column in an input GIS file)", e);
 			return null;
 		} catch (FileNotFoundException e) {
-//			LOGGER.log(Level.SEVERE, "Could not find an input shapefile to read objects from.", e);
+			LOGGER.log(Level.SEVERE, "Could not find an input shapefile to read objects from.", e);
 			return null;
 		}
 
+		// Now create the agents (note that their step methods are scheduled later
+		try {
+
+			agentContext = new AgentContext();
+			mainContext.addSubContext(agentContext);
+			agentGeography = GeographyFactoryFinder.createGeographyFactory(null).createGeography(
+					GlobalVars.CONTEXT_NAMES.AGENT_GEOGRAPHY, agentContext,
+					new GeographyParameters<IAgent>(new SimpleAdder<IAgent>()));
+
+			String agentDefn = ContextManager.getParameter(MODEL_PARAMETERS.AGENT_DEFINITION.toString());
+
+			LOGGER.log(Level.INFO, "Creating agents with the agent definition: '" + agentDefn + "'");
+
+			AgentFactory agentFactory = new AgentFactory(agentDefn);
+			agentFactory.createAgents(agentContext);
+
+		} catch (ParameterNotFoundException e) {
+			LOGGER.log(Level.SEVERE, "Could not find the parameter which defines how agents should be "
+					+ "created. The parameter is called " + MODEL_PARAMETERS.AGENT_DEFINITION
+					+ " and should be added to the parameters.xml file.", e);
+			return null;
+		} catch (AgentCreationException e) {
+			LOGGER.log(Level.SEVERE, "", e);
+			return null;
+		}
+
+		// Create the schedule
+		createSchedule();
 
 		return mainContext;
 	}
@@ -178,10 +213,31 @@ public class ContextManager implements ContextBuilder<Object> {
 		return l;
 	}
 
-	
+	private void createSchedule() {
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+
+		// Schedule something that outputs ticks every 1000 iterations.
+		schedule.schedule(ScheduleParameters.createRepeating(1, 1000, ScheduleParameters.LAST_PRIORITY), this,
+				"printTicks");
+
+		/*
+		 * Schedule the agents. This is slightly complicated because if all the agents can be stepped at the same time
+		 * (i.e. there are no inter- agent communications that make this difficult) then the scheduling is controlled by
+		 * a separate function that steps them in different threads. This massively improves performance on multi-core
+		 * machines.
+		 */
+ // Agents will execute in serial, use the repast scheduler.
+			LOGGER.log(Level.FINE, "The single-threaded scheduler will be used.");
+			ScheduleParameters agentStepParams = ScheduleParameters.createRepeating(1, 1, 0);
+			// Schedule the agents' step methods.
+			for (IAgent a : agentContext.getObjects(IAgent.class)) {
+				schedule.schedule(agentStepParams, a, "step");
+			}
+
+	}
 
 	public void printTicks() {
-//		LOGGER.info("Iterations: " + RunEnvironment.getInstance().getCurrentSchedule().getTickCount());
+		LOGGER.info("Iterations: " + RunEnvironment.getInstance().getCurrentSchedule().getTickCount());
 	}
 
 	/**
@@ -248,7 +304,7 @@ public class ContextManager implements ContextBuilder<Object> {
 					+ propFile.getAbsolutePath());
 		}
 
-//		LOGGER.log(Level.FINE, "Initialising properties from file " + propFile.toString());
+		LOGGER.log(Level.FINE, "Initialising properties from file " + propFile.toString());
 
 		ContextManager.properties = new Properties();
 
@@ -263,10 +319,10 @@ public class ContextManager implements ContextBuilder<Object> {
 			if (newVal != null) {
 				// The system property has the same name as the one from the
 				// properties file, replace the one in the properties file.
-//				LOGGER.log(Level.INFO, "Found a system property '" + k + "->" + newVal
-//						+ "' which matches a NeissModel property '" + k + "->" + properties.getProperty(k)
-//						+ "', replacing the non-system one.");
-//				properties.setProperty(k, newVal);
+				LOGGER.log(Level.INFO, "Found a system property '" + k + "->" + newVal
+						+ "' which matches a NeissModel property '" + k + "->" + properties.getProperty(k)
+						+ "', replacing the non-system one.");
+				properties.setProperty(k, newVal);
 			}
 		} // for
 		return;
@@ -279,7 +335,7 @@ public class ContextManager implements ContextBuilder<Object> {
 	 */
 	private void testEnvironment() throws EnvironmentError, NoIdentifierException {
 
-//		LOGGER.log(Level.FINE, "Testing the environment");
+		LOGGER.log(Level.FINE, "Testing the environment");
 		// Get copies of the contexts/projections from main context
 		Context<Road> rc = (Context<Road>) mainContext.getSubContext(GlobalVars.CONTEXT_NAMES.ROAD_CONTEXT);
 		Context<Junction> jc = (Context<Junction>) mainContext.getSubContext(GlobalVars.CONTEXT_NAMES.JUNCTION_CONTEXT);
@@ -309,11 +365,12 @@ public class ContextManager implements ContextBuilder<Object> {
 					+ sizeOfIterable(jc.getObjects(Junction.class)) + " and " + sizeOfIterable(rn.getNodes()));
 		}
 
-		System.out.println("The road network has " + sizeOfIterable(rn.getNodes()) + " nodes and "
+		LOGGER.log(Level.FINE, "The road network has " + sizeOfIterable(rn.getNodes()) + " nodes and "
 				+ sizeOfIterable(rn.getEdges()) + " edges.");
 
 		// 4. Check that Roads and Buildings have unique identifiers
 		HashMap<String, ?> idList = new HashMap<String, Object>();
+		
 		for (Road r : rc.getObjects(Road.class)) {
 			if (idList.containsKey(r.getIdentifier()))
 				throw new EnvironmentError("More than one building found with id " + r.getIdentifier());
@@ -351,7 +408,185 @@ public class ContextManager implements ContextBuilder<Object> {
 		ISchedule sched = RunEnvironment.getInstance().getCurrentSchedule();
 		sched.setFinishing(true);
 		sched.executeEndActions();
-		//LOGGER.log(Level.SEVERE, "ContextManager has been told to stop by " + clazz.getName(), ex);
+		LOGGER.log(Level.SEVERE, "ContextManager has been told to stop by " + clazz.getName(), ex);
+	}
+
+	/**
+	 * Move an agent by a vector. This method is required -- rather than giving agents direct access to the
+	 * agentGeography -- because when multiple threads are used they can interfere with each other and agents end up
+	 * moving incorrectly.
+	 * 
+	 * @param agent
+	 *            The agent to move.
+	 * @param distToTravel
+	 *            The distance that they will travel
+	 * @param angle
+	 *            The angle at which to travel.
+	 * @see Geography
+	 */
+	public static synchronized void moveAgentByVector(IAgent agent, double distToTravel, double angle) {
+		ContextManager.agentGeography.moveByVector(agent, distToTravel, angle);
+	}
+
+	/**
+	 * Move an agent. This method is required -- rather than giving agents direct access to the agentGeography --
+	 * because when multiple threads are used they can interfere with each other and agents end up moving incorrectly.
+	 * 
+	 * @param agent
+	 *            The agent to move.
+	 * @param point
+	 *            The point to move the agent to
+	 */
+	public static synchronized void moveAgent(IAgent agent, Point point) {
+		ContextManager.agentGeography.move(agent, point);
+	}
+
+	/**
+	 * Add an agent to the agent context. This method is required -- rather than giving agents direct access to the
+	 * agentGeography -- because when multiple threads are used they can interfere with each other and agents end up
+	 * moving incorrectly.
+	 * 
+	 * @param agent
+	 *            The agent to add.
+	 */
+	public static synchronized void addAgentToContext(IAgent agent) {
+		ContextManager.agentContext.add(agent);
+	}
+
+	/**
+	 * Get all the agents in the agent context. This method is required -- rather than giving agents direct access to
+	 * the agentGeography -- because when multiple threads are used they can interfere with each other and agents end up
+	 * moving incorrectly.
+	 * 
+	 * @return An iterable over all agents, chosen in a random order. See the <code>getRandomObjects</code> function in
+	 *         <code>DefaultContext</code>
+	 * @see DefaultContext
+	 */
+	public static synchronized Iterable<IAgent> getAllAgents() {
+		return ContextManager.agentContext.getRandomObjects(IAgent.class, ContextManager.agentContext.size());
+	}
+
+	/**
+	 * Get the geometry of the given agent. This method is required -- rather than giving agents direct access to the
+	 * agentGeography -- because when multiple threads are used they can interfere with each other and agents end up
+	 * moving incorrectly.
+	 */
+	public static synchronized Geometry getAgentGeometry(IAgent agent) {
+		return ContextManager.agentGeography.getGeometry(agent);
+	}
+
+	/**
+	 * Get a pointer to the agent context.
+	 * 
+	 * <p>
+	 * Warning: accessing the context directly is not thread safe so this should be used with care. The functions
+	 * <code>getAllAgents()</code> and <code>getAgentGeometry()</code> can be used to query the agent context or
+	 * projection.
+	 * </p>
+	 */
+	public static Context<IAgent> getAgentContext() {
+		return ContextManager.agentContext;
+	}
+
+	/**
+	 * Get a pointer to the agent geography.
+	 * 
+	 * <p>
+	 * Warning: accessing the context directly is not thread safe so this should be used with care. The functions
+	 * <code>getAllAgents()</code> and <code>getAgentGeometry()</code> can be used to query the agent context or
+	 * projection.
+	 * </p>
+	 */
+	public static Geography<IAgent> getAgentGeography() {
+		return ContextManager.agentGeography;
+	}
+	
+	
+	/**
+	 * Get the closest agent of the given type to the given agent.
+	 * 
+	 * @param agent
+	 * 		The central agent
+	 * @param type
+	 * 		The type of agent being searched for
+	 * @return
+	 * @throws AgentCreationException 
+	 */
+	public static IAgent getClosestAgent(IAgent agent, Class<? extends IAgent> type){
+		Iterable<IAgent> agents = ContextManager.agentContext.getObjects(type);
+		Iterator<IAgent> itr = agents.iterator();
+		
+		double minDist = Integer.MAX_VALUE;
+		Geometry agentGeo = ContextManager.agentGeography.getGeometry(agent);
+		IAgent closest = null;
+		while(itr.hasNext()){
+			IAgent current = itr.next();
+			Geometry currentGeo = ContextManager.agentGeography.getGeometry(current);
+			if(agentGeo.distance(currentGeo) < minDist){
+				closest = current;
+				minDist = agentGeo.distance(currentGeo);
+			}
+		}
+		if(closest == null){
+			try {
+				throw new AgentCreationException("No agents of type " + type.toString() + " exist in the current agent context.");
+			} catch (AgentCreationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return closest;
+	}
+	
+	
+	public static Retailer getRetailerWithLeastFood(){
+		Iterable<IAgent> agents = ContextManager.agentContext.getObjects(Retailer.class);
+		Iterator<IAgent> itr = agents.iterator();
+		
+		double minFood = Integer.MAX_VALUE;
+		Retailer best = null;
+		while(itr.hasNext()){
+			Retailer current = (Retailer)itr.next();
+			
+			if(current.food.size() < minFood){
+				best = current;
+				minFood = current.food.size();
+			}
+		}
+		if(best == null){
+			try {
+				throw new AgentCreationException("No agents of type " + Retailer.class.toString() + " exist in the current agent context.");
+			} catch (AgentCreationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return best;
+	}
+	
+	public static Producer getProducerWithMostFood(){
+		Iterable<IAgent> agents = ContextManager.agentContext.getObjects(Producer.class);
+		Iterator<IAgent> itr = agents.iterator();
+		
+		double maxFood = Integer.MIN_VALUE;
+		Producer best = null;
+		while(itr.hasNext()){
+			Producer current = (Producer)itr.next();
+			
+			if(current.food.size() > maxFood){
+				best = current;
+				maxFood = current.food.size();
+			}
+		}
+		if(best == null){
+			try {
+				throw new AgentCreationException("No agents of type " + Retailer.class.toString() + " exist in the current agent context.");
+			} catch (AgentCreationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return best;
 	}
 
 }

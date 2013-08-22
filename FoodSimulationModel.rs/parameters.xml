@@ -6,5 +6,11 @@
 	<parameter name="default_observer_maxPxcor" displayName="default_observer_maxPxcor" type="int" defaultValue="16"/>
 	<parameter name="default_observer_minPycor" displayName="default_observer_minPycor" type="int" defaultValue="-16"/>
 	<parameter name="default_observer_maxPycor" displayName="default_observer_maxPycor" type="int" defaultValue="16"/>
+	<parameter name="AGENT_DEFINITION" displayName="Agent Definition" type="java.lang.String" 
+						defaultValue="random:40,10,10,7,7" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
 
 </parameters>

@@ -4,6 +4,7 @@ import java.io.File;
 
 import repast.simphony.batch.BatchScenarioLoader;
 import repast.simphony.context.Context;
+import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.controller.Controller;
 import repast.simphony.engine.controller.DefaultController;
 import repast.simphony.engine.environment.AbstractRunner;
@@ -68,11 +69,52 @@ public class ModelRunner extends AbstractRunner {
 		((DefaultParameters) parameters).addParameter("default_observer_maxPycor", "Max Y Coordinate", int.class, 16, false);
 		((DefaultParameters) parameters).addParameter("default_observer_minPxcor", "Min X Coordinate", int.class, -16, false);
 		((DefaultParameters) parameters).addParameter("default_observer_minPycor", "Min Y Coordinate", int.class, -16, false);
-		runEnvironment = runEnvironmentBuilder.createRunEnvironment();
-		
+		((DefaultParameters) parameters).addParameter("AGENT_DEFINITION", "Agent Definition", String.class, "random:40,10,10,7,7" , false);
+		runEnvironment = runEnvironmentBuilder.createRunEnvironment(); 
 		runEnvironment.setParameters(parameters);
+		
+		Context con = new DefaultContext<Object>();
+		ContextManager manager = new ContextManager();
+		manager.build(con);
+		
+		setContext(con);
+		
+		
+		if(currentRunState == null){
+			System.out.println("Run State is null");
+		}
+		else if(currentRunState.getMasterContext() == null){
+			System.out.println("Master Context is null");
+		}
+		if(runEnvironmentBuilder == null){
+			System.out.println("Environment Builder is null");
+		}
+		if(controller == null){
+			System.out.println("Controller is null");
+		}
+		else if(controller.getCurrentRunState() == null){
+			System.out.println("Run State2 is null");
+		}
+		else if(controller.getCurrentRunState().getMasterContext() == null){
+			System.out.println("Master Context2 is null");
+		}
+		if(monitor == null){
+			System.out.println("Monitor is null");
+		}
+		if(producer == null){
+			System.out.println("Producer is null");
+		}
+		if(schedule == null){
+			System.out.println("Scedule is null");
+		}
+		if(parameters == null){
+			System.out.println("Parameters is null");
+		}
+		if(runEnvironment == null){
+			System.out.println("Run Environment is null");
+		}
 	    currentRunState = controller.runInitialize(parameters);
-		schedule = currentRunState.getScheduleRegistry().getModelSchedule();
+		schedule = RunEnvironment.getInstance().getCurrentSchedule();
 	}
 
 	public void cleanUpRun(){
@@ -117,7 +159,12 @@ public class ModelRunner extends AbstractRunner {
 	}
 	
 	public void setContext(Context context){
-		currentRunState.setMasterContext(context);
+		if(currentRunState == null){
+			controller.getCurrentRunState().setMasterContext(context);
+		}
+		else{
+			currentRunState.setMasterContext(context);
+		}
 	}
 	
 	public void scheduleAction(ScheduleParameters params, IAction action){

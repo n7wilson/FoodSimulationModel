@@ -27,6 +27,8 @@ import repast.simphony.relogo.BaseTurtle;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import foodsimulationmodel.relogo.agents.IAgent;
+
 //import foodsimulationmodel.pathmapping.Route;
 
 /**
@@ -44,6 +46,11 @@ public abstract class GlobalVars {
 	public static final String RoadShapefile = "RoadShapefile";
 	public static final String BuildingsRoadsCoordsCache = "BuildingsRoadsCoordsCache";
 	public static final String BuildingsRoadsCache = "BuildingsRoadsCache";
+	
+	public static final int minPxcor = -16;
+	public static final int maxPxcor = 16;
+	public static final int minPycor = -16;
+	public static final int maxPycor = 16;
 	
 	public static final class GEOGRAPHY_PARAMS {
 		
@@ -110,7 +117,7 @@ public abstract class GlobalVars {
 		// This variable is used by NetworkEdge.getWeight() function so that it knows what travel options
 		// are available to the agent (e.g. has a car). Can't be passed as a parameter because NetworkEdge.getWeight()
 		// must override function in RepastEdge because this is the one called by ShortestPath.
-		public static BaseTurtle currentAgent = null;
+		public static IAgent currentAgent = null;
 		public static Object currentBurglarLock = new Object();
 
 		public static final String WALK = "walk";

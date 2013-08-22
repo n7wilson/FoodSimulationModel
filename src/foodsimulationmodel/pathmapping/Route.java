@@ -48,17 +48,13 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 
-import foodsimulationmodel.relogo.agents.Person;
-
-import foodsimulationmodel.relogo.UserTurtle;
-import repast.simphony.relogo.AgentSet;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.ShortestPath;
+import foodsimulationmodel.relogo.agents.IAgent;
 import foodsimulationmodel.exceptions.RoutingException;
-import foodsimulationmodel.pathmapping.*;
-import foodsimulationmodel.relogo.environment.GlobalVars;
 import foodsimulationmodel.relogo.environment.ContextManager;
+import foodsimulationmodel.relogo.environment.GlobalVars;
 
 /**
  * Create routes around a GIS road network. The <code>setRoute</code> function actually finds the route and can be
@@ -76,15 +72,15 @@ import foodsimulationmodel.relogo.environment.ContextManager;
  */
 public class Route implements Cacheable {
 
-//	private static Logger LOGGER = Logger.getLogger(Route.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Route.class.getName());
 
 	static {
 		// Route.routeCache = new Hashtable<CachedRoute, CachedRoute>();
 	}
 
-	private UserTurtle agent;
+	private IAgent agent;
 	private Coordinate destination;
-	private UserTurtle destinationBuilding;
+	private IAgent destinationAgent;
 
 	/*
 	 * The route consists of a list of coordinates which describe how to get to the destination. Each coordinate might
@@ -142,22 +138,20 @@ public class Route implements Cacheable {
 	/**
 	 * Creates a new Route object.
 	 * 
-	 * @param burglar
+	 * @param agent
 	 *            The agent which this Route will control.
 	 * 
 	 * @param destination
 	 *            The agent's destination.
 	 * 
-	 * @param destinationBuilding
-	 *            The (optional) building they're heading to.
+	 * @param destinationAgent
+	 *            The agent they're heading to.
 	 * 
-	 * @param type
-	 *            The (optional) type of route, used by burglars who want to search.
 	 */
-	public Route(UserTurtle agent, Coordinate destination, UserTurtle destinationBuilding) {
+	public Route(IAgent agent, Coordinate destination, IAgent destinationAgent) {
 		this.destination = destination;
 		this.agent = agent;
-		this.destinationBuilding = destinationBuilding;
+		this.destinationAgent = destinationAgent;
 	}
 
 	/**
@@ -185,16 +179,16 @@ public class Route implements Cacheable {
 		this.routeDescriptionX = new Vector<String>();
 		this.routeSpeedsX = new Vector<Double>();
 
-//		LOGGER.log(Level.FINER, "Planning route for: "
-//				+ this.agent.toString()
-//				+ " to: "
-//				+ this.destinationBuilding.toString());
-//		if (atDestination()) {
-//			LOGGER.log(Level.WARNING, "Already at destination, cannot create a route for " + this.agent.toString());
-//			return;
-//		}
+		LOGGER.log(Level.FINER, "Planning route for: "
+				+ this.agent.toString()
+				+ " to: "
+				+ this.destinationAgent.toString());
+		if (atDestination()) {
+			LOGGER.log(Level.WARNING, "Already at destination, cannot create a route for " + this.agent.toString());
+			return;
+		}
 
-		Coordinate currentCoord = new Coordinate(this.agent.getXcor(), this.agent.getYcor());
+		Coordinate currentCoord = ContextManager.getAgentGeometry(this.agent).getCoordinate();
 		Coordinate destCoord = this.destination;
 
 		// See if a route has already been cached.
@@ -309,10 +303,10 @@ public class Route implements Cacheable {
 			checkListSizes();
 
 		} catch (RoutingException e) {
-//			LOGGER.log(Level.SEVERE, "Route.setRoute(): Problem creating route for " + this.agent.toString()
-//					+ " going from " + currentCoord.toString() + " to " + this.destination.toString() + "("
-//					+ (this.destinationBuilding == null ? "" : this.destinationBuilding.toString())
-//					+ ") See earlier messages error messages for more info.");
+			LOGGER.log(Level.SEVERE, "Route.setRoute(): Problem creating route for " + this.agent.toString()
+					+ " going from " + currentCoord.toString() + " to " + this.destination.toString() + "("
+					+ (this.destinationAgent == null ? "" : this.destinationAgent.toString())
+					+ ") See earlier messages error messages for more info.");
 			throw e;
 		}
 		// Cache the route and route speeds
@@ -328,8 +322,8 @@ public class Route implements Cacheable {
 		// }
 		// TempLogger.out("...Route cacheing new route with unique id " + cachedRoute.hashCode());
 
-//		LOGGER.log(Level.FINER, "Route Finished planning route for " + this.agent.toString() + "with "
-//				+ this.routeX.size() + " coords in " + (0.000001 * (System.nanoTime() - time)) + "ms.");
+		LOGGER.log(Level.FINER, "Route Finished planning route for " + this.agent.toString() + "with "
+				+ this.routeX.size() + " coords in " + (0.000001 * (System.nanoTime() - time)) + "ms.");
 
 		// Finished, just check that the route arrays are all in sync
 		assert this.roadsX.size() == this.routeX.size() && this.routeDescriptionX.size() == this.routeSpeedsX.size()
@@ -425,13 +419,11 @@ public class Route implements Cacheable {
 			boolean travelledMaxDist = false; // True when travelled maximum distance this iteration
 			double speed; // The speed to travel to next coord
 			GeometryFactory geomFac = new GeometryFactory();
-			currentCoord = new Coordinate(this.agent.getXcor(), this.agent.getYcor());
+			currentCoord = ContextManager.getAgentGeometry(this.agent).getCoordinate();
 
 			while (!travelledMaxDist && !this.atDestination()) {
 				target = this.routeX.get(this.currentPosition);
-				
-				speed = ((Person)this.agent).speed;
-				//speed = this.routeSpeedsX.get(this.currentPosition);
+				speed = this.routeSpeedsX.get(this.currentPosition);
 				/*
 				 * TODO Remember which roads have been passed, used to work out what should be added to cognitive map.
 				 * Only add roads once the agent has moved all the way down them
@@ -451,7 +443,8 @@ public class Route implements Cacheable {
 
 					// See if agent has reached the end of the route.
 					if (this.currentPosition == (this.routeX.size() - 1)) {
-						this.agent.setxy(target.x, target.y);
+						ContextManager.moveAgent(this.agent, geomFac.createPoint(currentCoord));
+						// ContextManager.agentGeography.move(this.agent, geomFac.createPoint(currentCoord));
 						break; // Break out of while loop, have reached end of route.
 					}
 					// Haven't reached end of route, increment the counter
@@ -462,10 +455,10 @@ public class Route implements Cacheable {
 				// distance allowed to travel (unlikely but possible)
 				else if (distTravelled + distToTarget == GlobalVars.GEOGRAPHY_PARAMS.TRAVEL_PER_TURN) {
 					travelledMaxDist = true;
-					this.agent.setxy(target.x, target.y);
+					ContextManager.moveAgent(agent, geomFac.createPoint(target));
 					// ContextManager.agentGeography.move(agent, geomFac.createPoint(target));
 					this.currentPosition++;
-//					LOGGER.log(Level.WARNING, "Travel(): UNUSUAL CONDITION HAS OCCURED!");
+					LOGGER.log(Level.WARNING, "Travel(): UNUSUAL CONDITION HAS OCCURED!");
 				} else {
 					// Otherwise move as far as we can towards the target along the road we're on.
 					// Move along the vector the maximum distance we're allowed this turn (take into account relative
@@ -474,10 +467,9 @@ public class Route implements Cacheable {
 					// Move the agent, first move them to the current coord (the first part of the while loop doesn't do
 					// this for efficiency)
 					// ContextManager.agentGeography.move(this.agent, geomFac.createPoint(currentCoord));
-					this.agent.setxy(currentCoord.x, currentCoord.y);
+					ContextManager.moveAgent(this.agent, geomFac.createPoint(currentCoord));
 					// Now move by vector towards target (calculated angle earlier).
-					this.agent.facexy(target.x, target.y);
-					this.agent.forward(distToTravel);
+					ContextManager.moveAgentByVector(this.agent, distToTravel, distAndAngle[1]);
 					// ContextManager.agentGeography.moveByVector(this.agent, distToTravel, distAndAngle[1]);
 
 					travelledMaxDist = true;
@@ -564,9 +556,9 @@ public class Route implements Cacheable {
 			// TempLogger.out("...Finished Travelling(" + (0.000001 * (System.nanoTime() - time)) + "ms)");
 			// // } // synchronized GlobalVars.TRANSPORT_PARAMS.currentBurglar
 		} catch (Exception e) {
-//			LOGGER.log(Level.SEVERE, "Route.trave(): Caught error travelling for " + this.agent.toString()
-//					+ " going to " + "destination "
-//					+ (this.destinationBuilding == null ? "" : this.destinationBuilding.toString() + ")"));
+			LOGGER.log(Level.SEVERE, "Route.trave(): Caught error travelling for " + this.agent.toString()
+					+ " going to " + "destination "
+					+ (this.destinationAgent == null ? "" : this.destinationAgent.toString() + ")"));
 			throw e;
 		} // catch exception
 	}
@@ -581,7 +573,7 @@ public class Route implements Cacheable {
 	 * @param destination
 	 * @return
 	 */
-	public double getDistance(UserTurtle theBurglar, Coordinate origin, Coordinate destination) {
+	public double getDistance(IAgent theBurglar, Coordinate origin, Coordinate destination) {
 
 		// // See if this distance has already been calculated
 		// if (Route.routeDistanceCache == null) {
@@ -668,14 +660,13 @@ public class Route implements Cacheable {
 	 * @return the nearest road coordinate
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	private synchronized Coordinate getNearestRoadCoord(Coordinate inCoord) throws Exception {
 		// double time = System.nanoTime();
 
 		synchronized (buildingsOnRoadCacheLock) {
 			if (nearestRoadCoordCache == null) {
-//				LOGGER.log(Level.FINE, "Route.getNearestRoadCoord called for first time, "
-//						+ "creating cache of all roads and the buildings which are on them ...");
+				LOGGER.log(Level.FINE, "Route.getNearestRoadCoord called for first time, "
+						+ "creating cache of all roads and the buildings which are on them ...");
 				// Create a new cache object, this will be read from disk if
 				// possible (which is why the getInstance() method is used
 				// instead of the constructor.
@@ -684,7 +675,7 @@ public class Route implements Cacheable {
 				File roadsFile = new File(gisDir + ContextManager.getProperty(GlobalVars.RoadShapefile));
 				File serialisedLoc = new File(gisDir + ContextManager.getProperty(GlobalVars.BuildingsRoadsCoordsCache));
 
-				nearestRoadCoordCache = NearestRoadCoordCache.getInstance(this.agent.turtles(),
+				nearestRoadCoordCache = NearestRoadCoordCache.getInstance(ContextManager.agentGeography,
 						buildingsFile, ContextManager.roadProjection, roadsFile, serialisedLoc, new GeometryFactory());
 			} // if not cached
 		} // synchronized
@@ -719,9 +710,9 @@ public class Route implements Cacheable {
 			for (Junction o : currentJunctions) {
 				for (Junction d : destJunctions) {
 					if (o == null || d == null) {
-//						LOGGER.log(Level.WARNING, "Route.getShortestRoute() error: either the destination or origin "
-//								+ "junction is null. This can be caused by disconnected roads. It's probably OK"
-//								+ "to ignore this as a route should still be created anyway.");
+						LOGGER.log(Level.WARNING, "Route.getShortestRoute() error: either the destination or origin "
+								+ "junction is null. This can be caused by disconnected roads. It's probably OK"
+								+ "to ignore this as a route should still be created anyway.");
 					} else {
 						p = new ShortestPath<Junction>(ContextManager.roadNetwork);
 						pathLength = p.getPathLength(o,d);
@@ -751,9 +742,9 @@ public class Route implements Cacheable {
 					debugString += "\t" + j.toString() + ", roads: " + j.getRoads().toString() + "\n";
 				throw new RoutingException(debugString);
 			}
-//			LOGGER.log(Level.FINER, "Route.getShortestRoute (" + (0.000001 * (System.nanoTime() - time))
-//					+ "ms) found shortest path " + "(length: " + shortestPathLength + ") from "
-//					+ routeEndpoints[0].toString() + " to " + routeEndpoints[1].toString());
+			LOGGER.log(Level.FINER, "Route.getShortestRoute (" + (0.000001 * (System.nanoTime() - time))
+					+ "ms) found shortest path " + "(length: " + shortestPathLength + ") from "
+					+ routeEndpoints[0].toString() + " to " + routeEndpoints[1].toString());
 			return shortestPath;
 		} // synchronized
 	}
@@ -809,7 +800,7 @@ public class Route implements Cacheable {
 					+ "coordinate are part of the road '" + road.toString() + "' (person '" + this.agent.toString()
 					+ "').\n" + "Road coords: " + roadCoordsString + "\n" + "\tOrigin: " + currentCoord.toString()
 					+ "\n" + "\tDestination: " + destinationCoord.toString() + " ( "
-					+ this.destinationBuilding.toString() + " )\n " + "Heading " + (toJunction ? "to" : "away from")
+					+ this.destinationAgent.toString() + " )\n " + "Heading " + (toJunction ? "to" : "away from")
 					+ " a junction, so " + (toJunction ? "destination" : "origin")
 					+ " should be part of a road segment");
 		}
@@ -855,14 +846,14 @@ public class Route implements Cacheable {
 			}
 		} // for
 		if (foundAllCoords) {
-//			LOGGER.log(Level.FINER, "getCoordsAlongRoad (" + (0.000001 * (System.nanoTime() - time)) + "ms)");
+			LOGGER.log(Level.FINER, "getCoordsAlongRoad (" + (0.000001 * (System.nanoTime() - time)) + "ms)");
 			return;
 		} else { // If we get here then the route hasn't been created
 			// A load of debugging info
 			String error = "Route: getCoordsAlongRoad: could not find destination coordinates "
 					+ "along the road.\n\tHeading *" + (toJunction ? "towards" : "away from")
 					+ "* a junction.\n\t Person: " + this.agent.toString() + ")\n\tDestination building: "
-					+ destinationBuilding.toString() + "\n\tRoad causing problems: " + road.toString()
+					+ destinationAgent.toString() + "\n\tRoad causing problems: " + road.toString()
 					+ "\n\tRoad vertex coordinates: " + Arrays.toString(roadCoords);
 			throw new RoutingException(error);
 			/*
@@ -991,7 +982,7 @@ public class Route implements Cacheable {
 					&& this.roadsX.size() == this.routeDescriptionX.size();
 
 			// Finished!
-//			LOGGER.log(Level.FINER, "getRouteBetweenJunctions (" + (0.000001 * (System.nanoTime() - time)) + "ms");
+			LOGGER.log(Level.FINER, "getRouteBetweenJunctions (" + (0.000001 * (System.nanoTime() - time)) + "ms");
 			return;
 		} // synchronized
 	} // getRouteBetweenJunctions
@@ -1003,7 +994,7 @@ public class Route implements Cacheable {
 	 * @return True if the person is at their destination
 	 */
 	public boolean atDestination() {
-		return new Coordinate(this.agent.getXcor(), this.agent.getYcor()).equals(this.destination);
+		return ContextManager.getAgentGeometry(this.agent).getCoordinate().equals(this.destination);
 	}
 
 	// /**
@@ -1059,17 +1050,17 @@ public class Route implements Cacheable {
 	// this.printRoute();
 	// }
 
-//	private void printRoute() {
-//		StringBuilder out = new StringBuilder();
-//		out.append("Printing route (" + this.agent.toString() + "). Current position in list is "
-//				+ this.currentPosition + " ('" + this.routeDescriptionX.get(this.currentPosition) + "')");
-//		for (int i = 0; i < this.routeX.size(); i++) {
-//			out.append("\t(" + this.agent.toString() + ") " + this.routeX.get(i).toString() + "\t"
-//					+ this.routeSpeedsX.get(i).toString() + "\t" + this.roadsX.get(i) + "\t"
-//					+ this.routeDescriptionX.get(i));
-//		}
-//		LOGGER.info(out.toString());
-//	}
+	private void printRoute() {
+		StringBuilder out = new StringBuilder();
+		out.append("Printing route (" + this.agent.toString() + "). Current position in list is "
+				+ this.currentPosition + " ('" + this.routeDescriptionX.get(this.currentPosition) + "')");
+		for (int i = 0; i < this.routeX.size(); i++) {
+			out.append("\t(" + this.agent.toString() + ") " + this.routeX.get(i).toString() + "\t"
+					+ this.routeSpeedsX.get(i).toString() + "\t" + this.roadsX.get(i) + "\t"
+					+ this.routeDescriptionX.get(i));
+		}
+		LOGGER.info(out.toString());
+	}
 
 	
 	/**
@@ -1153,14 +1144,14 @@ public class Route implements Cacheable {
 	 * 
 	 * @return the destinationHouse
 	 */
-	public UserTurtle getDestinationBuilding() {
-		if (this.destinationBuilding == null) {
-//			LOGGER.log(Level.WARNING, "Route: getDestinationBuilding(), warning, no destination building has "
-//					+ "been set. This might be ok, the agent might be supposed to be heading to a coordinate "
-//					+ "not a particular building(?)");
+	public IAgent getDestinationAgent() {
+		if (this.destinationAgent == null) {
+			LOGGER.log(Level.WARNING, "Route: getDestinationBuilding(), warning, no destination building has "
+					+ "been set. This might be ok, the agent might be supposed to be heading to a coordinate "
+					+ "not a particular building(?)");
 			return null;
 		}
-		return destinationBuilding;
+		return destinationAgent;
 	}
 
 	/**
@@ -1203,12 +1194,12 @@ public class Route implements Cacheable {
 		double time = System.nanoTime();
 		if (coordCache == null) { // Fist check cache has been created
 			coordCache = new HashMap<Coordinate, List<Road>>();
-//			LOGGER.log(Level.FINER,
-//					"Route.populateCoordCache called for first time, creating new cache of all Road coordinates.");
+			LOGGER.log(Level.FINER,
+					"Route.populateCoordCache called for first time, creating new cache of all Road coordinates.");
 		}
 		if (coordCache.size() == 0) { // Now popualte it if it hasn't already
 										// been populated
-//			LOGGER.log(Level.FINER, "Route.populateCoordCache: is empty, creating new cache of all Road coordinates.");
+			LOGGER.log(Level.FINER, "Route.populateCoordCache: is empty, creating new cache of all Road coordinates.");
 
 			for (Road r : ContextManager.roadContext.getObjects(Road.class)) {
 				for (Coordinate c : ContextManager.roadProjection.getGeometry(r).getCoordinates()) {
@@ -1224,11 +1215,34 @@ public class Route implements Cacheable {
 				}
 			}
 
-//			LOGGER.log(Level.FINER, "... finished caching all road coordinates (in " + 0.000001
-//					* (System.nanoTime() - time) + "ms)");
+			LOGGER.log(Level.FINER, "... finished caching all road coordinates (in " + 0.000001
+					* (System.nanoTime() - time) + "ms)");
 		}
 	}
 
+	/**
+	 * Find the buildings which can be accessed from the given road (the given road is the closest to the buildings).
+	 * Uses a separate cache object which can be serialised so that the cache doesn't need to be rebuilt every time.
+	 * 
+	 * @param road
+	 * @return
+	 * @throws Exception
+	 */
+	private List<IAgent> getBuildingsOnRoad(Road road) throws Exception {
+		if (buildingsOnRoadCache == null) {
+			LOGGER.log(Level.FINER, "Route.getBuildingsOnRoad called for first time, "
+					+ "creating cache of all roads and the buildings which are on them ...");
+			// Create a new cache object, this will be read from disk if possible (which is why the
+			// getInstance() method is used instead of the constructor.
+			String gisDir = GlobalVars.GISDataDirectory;
+			File buildingsFile = new File(gisDir + GlobalVars.BuildingShapefile);
+			File roadsFile = new File(gisDir + GlobalVars.RoadShapefile);
+			File serialLoc = new File(gisDir + ContextManager.getProperty(GlobalVars.BuildingsRoadsCache));
+			buildingsOnRoadCache = BuildingsOnRoadCache.getInstance(ContextManager.agentGeography, buildingsFile,
+					ContextManager.roadProjection, roadsFile, serialLoc, new GeometryFactory());
+		} // if not cached
+		return buildingsOnRoadCache.get(road);
+	}
 
 	/**
 	 * Calculate the distance (in meters) between two Coordinates, using the coordinate reference system that the
@@ -1285,8 +1299,7 @@ public class Route implements Cacheable {
 		// Works by creating two coords (close to a randomly chosen object) which are a certain distance apart
 		// then using similar method as other distance() function
 		GeodeticCalculator calculator = new GeodeticCalculator(ContextManager.roadProjection.getCRS());
-		UserTurtle randAgent = new Person();
-		Coordinate c1 = new Coordinate(randAgent.randomXcor(), randAgent.randomYcor());
+		Coordinate c1 = ContextManager.agentContext.getRandomObject().getCoords();
 		calculator.setStartingGeographicPoint(c1.x, c1.y);
 		calculator.setDestinationGeographicPoint(c1.x, c1.y + dist);
 		return String.valueOf(calculator.getOrthodromicDistance());
@@ -1331,6 +1344,16 @@ public class Route implements Cacheable {
 	// }
 	// }
 
+	/**
+	 * Will add the given buildings to the awareness space of the Burglar who is being controlled by this Route.
+	 * 
+	 * @param buildings
+	 *            A list of buildings
+	 */
+	protected <T> void passedObject(T object, Class<T> clazz) {
+		List<T> list = new ArrayList<T>(1);
+		list.add(object);
+	}
 
 }
 
@@ -1352,11 +1375,11 @@ public class Route implements Cacheable {
  */
 class BuildingsOnRoadCache implements Serializable {
 
-//	private static Logger LOGGER = Logger.getLogger(BuildingsOnRoadCache.class.getName());
+	private static Logger LOGGER = Logger.getLogger(BuildingsOnRoadCache.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	// The actual cache, this isn't serialised
-	private static transient Hashtable<Road, ArrayList<UserTurtle>> theCache;
+	private static transient Hashtable<Road, ArrayList<IAgent>> theCache;
 	// The 'reference' cache, stores the building and road ids and can be
 	// serialised
 	private Hashtable<String, ArrayList<String>> referenceCache;
@@ -1372,7 +1395,7 @@ class BuildingsOnRoadCache implements Serializable {
 	private long createdTime;
 
 	// Private constructor because getInstance() should be used
-	private BuildingsOnRoadCache(Geography<UserTurtle> buildingEnvironment, File buildingsFile,
+	private BuildingsOnRoadCache(Geography<IAgent> buildingEnvironment, File buildingsFile,
 			Geography<Road> roadEnvironment, File roadsFile, File serialisedLoc, GeometryFactory geomFac)
 			throws Exception {
 		// this.buildingEnvironment = buildingEnvironment;
@@ -1380,13 +1403,13 @@ class BuildingsOnRoadCache implements Serializable {
 		this.buildingsFile = buildingsFile;
 		this.roadsFile = roadsFile;
 		this.serialisedLoc = serialisedLoc;
-		theCache = new Hashtable<Road, ArrayList<UserTurtle>>();
+		theCache = new Hashtable<Road, ArrayList<IAgent>>();
 		this.referenceCache = new Hashtable<String, ArrayList<String>>();
 
-//		LOGGER.log(Level.FINE, "BuildingsOnRoadCache() creating new cache with data (and modification date):\n\t"
-//				+ this.buildingsFile.getAbsolutePath() + " (" + new Date(this.buildingsFile.lastModified()) + ")\n\t"
-//				+ this.roadsFile.getAbsolutePath() + " (" + new Date(this.roadsFile.lastModified()) + ")\n\t"
-//				+ this.serialisedLoc.getAbsolutePath());
+		LOGGER.log(Level.FINE, "BuildingsOnRoadCache() creating new cache with data (and modification date):\n\t"
+				+ this.buildingsFile.getAbsolutePath() + " (" + new Date(this.buildingsFile.lastModified()) + ")\n\t"
+				+ this.roadsFile.getAbsolutePath() + " (" + new Date(this.roadsFile.lastModified()) + ")\n\t"
+				+ this.serialisedLoc.getAbsolutePath());
 
 		populateCache(buildingEnvironment, roadEnvironment, geomFac);
 		this.createdTime = new Date().getTime();
@@ -1399,12 +1422,12 @@ class BuildingsOnRoadCache implements Serializable {
 
 	}
 
-	private void populateCache(Geography<UserTurtle> buildingEnvironment, Geography<Road> roadEnvironment,
+	private void populateCache(Geography<IAgent> buildingEnvironment, Geography<Road> roadEnvironment,
 			GeometryFactory geomFac) throws Exception {
 		double time = System.nanoTime();
-		for (UserTurtle b : buildingEnvironment.getAllObjects()) {
+		for (IAgent b : buildingEnvironment.getAllObjects()) {
 			// Find the closest road to this building
-			Geometry buildingPoint = geomFac.createPoint(new Coordinate(b.getXcor(),b.getYcor()));
+			Geometry buildingPoint = geomFac.createPoint(b.getCoords());
 			double minDistance = Double.MAX_VALUE;
 			Road closestRoad = null;
 			double distance;
@@ -1422,7 +1445,7 @@ class BuildingsOnRoadCache implements Serializable {
 				theCache.get(closestRoad).add(b);
 				this.referenceCache.get(closestRoad.getIdentifier()).add(b.getIdentifier());
 			} else {
-				ArrayList<UserTurtle> l = new ArrayList<UserTurtle>();
+				ArrayList<IAgent> l = new ArrayList<IAgent>();
 				l.add(b);
 				theCache.put(closestRoad, l);
 				ArrayList<String> l2 = new ArrayList<String>();
@@ -1432,13 +1455,13 @@ class BuildingsOnRoadCache implements Serializable {
 		} // for buildings
 		int numRoads = theCache.keySet().size();
 		int numBuildings = 0;
-		for (List<UserTurtle> l : theCache.values())
+		for (List<IAgent> l : theCache.values())
 			numBuildings += l.size();
-//		LOGGER.log(Level.FINER, "Finished caching roads and buildings. Cached " + numRoads + " roads and "
-//				+ numBuildings + " buildings in " + 0.000001 * (System.nanoTime() - time) + "ms");
+		LOGGER.log(Level.FINER, "Finished caching roads and buildings. Cached " + numRoads + " roads and "
+				+ numBuildings + " buildings in " + 0.000001 * (System.nanoTime() - time) + "ms");
 	}
 
-	public List<UserTurtle> get(Road r) {
+	public List<IAgent> get(Road r) {
 		return theCache.get(r);
 	}
 
@@ -1458,8 +1481,8 @@ class BuildingsOnRoadCache implements Serializable {
 				serialisedLoc.delete(); // delete to stop problems loading incomplete file next time
 			throw ex;
 		}
-//		LOGGER.log(Level.FINER, "Serialised BuildingsOnRoadCache to " + this.serialisedLoc.getAbsolutePath() + " in ("
-//				+ 0.000001 * (System.nanoTime() - time) + "ms)");
+		LOGGER.log(Level.FINER, "Serialised BuildingsOnRoadCache to " + this.serialisedLoc.getAbsolutePath() + " in ("
+				+ 0.000001 * (System.nanoTime() - time) + "ms)");
 	}
 
 	/**
@@ -1476,7 +1499,7 @@ class BuildingsOnRoadCache implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static BuildingsOnRoadCache getInstance(Geography<UserTurtle> buildingEnv, File buildingsFile,
+	public synchronized static BuildingsOnRoadCache getInstance(Geography<IAgent> buildingEnv, File buildingsFile,
 			Geography<Road> roadEnv, File roadsFile, File serialisedLoc, GeometryFactory geomFac) throws Exception {
 		double time = System.nanoTime();
 		// See if there is a cache object on disk.
@@ -1497,8 +1520,8 @@ class BuildingsOnRoadCache implements Serializable {
 				if (!buildingsFile.getAbsolutePath().equals(bc.buildingsFile.getAbsolutePath())
 						|| !roadsFile.getAbsolutePath().equals(bc.roadsFile.getAbsolutePath())
 						|| buildingsFile.lastModified() > bc.createdTime || roadsFile.lastModified() > bc.createdTime) {
-//					LOGGER.log(Level.FINER, "BuildingsOnRoadCache, found serialised object but it doesn't match the "
-//							+ "data (or could have different modification dates), will create a new cache.");
+					LOGGER.log(Level.FINER, "BuildingsOnRoadCache, found serialised object but it doesn't match the "
+							+ "data (or could have different modification dates), will create a new cache.");
 				} else {
 					// Have found a useable serialised cache. Now use the cached
 					// list of id's to construct a
@@ -1507,22 +1530,22 @@ class BuildingsOnRoadCache implements Serializable {
 					Hashtable<String, Road> allRoads = new Hashtable<String, Road>();
 					for (Road r : roadEnv.getAllObjects())
 						allRoads.put(r.getIdentifier(), r);
-					Hashtable<String, UserTurtle> allBuildings = new Hashtable<String, UserTurtle>();
-					for (UserTurtle b : buildingEnv.getAllObjects())
+					Hashtable<String, IAgent> allBuildings = new Hashtable<String, IAgent>();
+					for (IAgent b : buildingEnv.getAllObjects())
 						allBuildings.put(b.getIdentifier(), b);
 
 					// Now create the new cache
-					theCache = new Hashtable<Road, ArrayList<UserTurtle>>();
+					theCache = new Hashtable<Road, ArrayList<IAgent>>();
 
 					for (String roadId : bc.referenceCache.keySet()) {
-						ArrayList<UserTurtle> buildings = new ArrayList<UserTurtle>();
+						ArrayList<IAgent> buildings = new ArrayList<IAgent>();
 						for (String buildingId : bc.referenceCache.get(roadId)) {
 							buildings.add(allBuildings.get(buildingId));
 						}
 						theCache.put(allRoads.get(roadId), buildings);
 					}
-//					LOGGER.log(Level.FINER, "BuildingsOnRoadCache, found serialised cache, returning it (in "
-//							+ 0.000001 * (System.nanoTime() - time) + "ms)");
+					LOGGER.log(Level.FINER, "BuildingsOnRoadCache, found serialised cache, returning it (in "
+							+ 0.000001 * (System.nanoTime() - time) + "ms)");
 					return bc;
 				}
 			} catch (IOException ex) {
@@ -1555,7 +1578,7 @@ class BuildingsOnRoadCache implements Serializable {
  */
 class NearestRoadCoordCache implements Serializable {
 
-//	private static Logger LOGGER = Logger.getLogger(NearestRoadCoordCache.class.getName());
+	private static Logger LOGGER = Logger.getLogger(NearestRoadCoordCache.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	private Hashtable<Coordinate, Coordinate> theCache; // The actual cache
@@ -1571,7 +1594,7 @@ class NearestRoadCoordCache implements Serializable {
 
 	private GeometryFactory geomFac;
 
-	private NearestRoadCoordCache(AgentSet<UserTurtle> buildingEnvironment, File buildingsFile,
+	private NearestRoadCoordCache(Geography<IAgent> buildingEnvironment, File buildingsFile,
 			Geography<Road> roadEnvironment, File roadsFile, File serialisedLoc, GeometryFactory geomFac)
 			throws Exception {
 
@@ -1581,10 +1604,10 @@ class NearestRoadCoordCache implements Serializable {
 		this.theCache = new Hashtable<Coordinate, Coordinate>();
 		this.geomFac = geomFac;
 
-//		LOGGER.log(Level.FINE, "NearestRoadCoordCache() creating new cache with data (and modification date):\n\t"
-//				+ this.buildingsFile.getAbsolutePath() + " (" + new Date(this.buildingsFile.lastModified()) + ") \n\t"
-//				+ this.roadsFile.getAbsolutePath() + " (" + new Date(this.roadsFile.lastModified()) + "):\n\t"
-//				+ this.serialisedLoc.getAbsolutePath());
+		LOGGER.log(Level.FINE, "NearestRoadCoordCache() creating new cache with data (and modification date):\n\t"
+				+ this.buildingsFile.getAbsolutePath() + " (" + new Date(this.buildingsFile.lastModified()) + ") \n\t"
+				+ this.roadsFile.getAbsolutePath() + " (" + new Date(this.roadsFile.lastModified()) + "):\n\t"
+				+ this.serialisedLoc.getAbsolutePath());
 
 		populateCache(buildingEnvironment, roadEnvironment);
 		this.createdTime = new Date().getTime();
@@ -1595,20 +1618,20 @@ class NearestRoadCoordCache implements Serializable {
 		this.theCache.clear();
 	}
 
-	private void populateCache(AgentSet<UserTurtle> buildingEnvironment, Geography<Road> roadEnvironment)
+	private void populateCache(Geography<IAgent> buildingEnvironment, Geography<Road> roadEnvironment)
 			throws Exception {
 		double time = System.nanoTime();
 		theCache = new Hashtable<Coordinate, Coordinate>();
 		// Iterate over every building and find the nearest road point
-		for (UserTurtle b : buildingEnvironment) {
+		for (IAgent b : buildingEnvironment.getAllObjects()) {
 			List<Coordinate> nearestCoords = new ArrayList<Coordinate>();
-			Route.findNearestObject(new Coordinate(b.getXcor(),b.getYcor()), roadEnvironment, nearestCoords,
+			Route.findNearestObject(b.getCoords(), roadEnvironment, nearestCoords,
 					GlobalVars.GEOGRAPHY_PARAMS.BUFFER_DISTANCE.LARGE);
 			// Two coordinates returned by closestPoints(), need to find the one
 			// which isn't the building coord
 			Coordinate nearestPoint = null;
 			for (Coordinate c : nearestCoords) {
-				if (!c.equals(new Coordinate(b.getXcor(),b.getYcor()))) {
+				if (!c.equals(b.getCoords())) {
 					nearestPoint = c;
 					break;
 				}
@@ -1617,9 +1640,9 @@ class NearestRoadCoordCache implements Serializable {
 				throw new Exception("Route.getNearestRoadCoord() error: couldn't find a road coordinate which "
 						+ "is close to building " + b.toString());
 			}
-			theCache.put(new Coordinate(b.getXcor(),b.getYcor()), nearestPoint);
+			theCache.put(b.getCoords(), nearestPoint);
 		}// for Buildings
-//		LOGGER.log(Level.FINER, "Finished caching nearest roads (" + (0.000001 * (System.nanoTime() - time)) + "ms)");
+		LOGGER.log(Level.FINER, "Finished caching nearest roads (" + (0.000001 * (System.nanoTime() - time)) + "ms)");
 	} // if nearestRoadCoordCache = null;
 
 	/**
@@ -1635,8 +1658,8 @@ class NearestRoadCoordCache implements Serializable {
 		double time = System.nanoTime();
 		Coordinate nearestCoord = this.theCache.get(c);
 		if (nearestCoord != null) {
-//			LOGGER.log(Level.FINER, "NearestRoadCoordCache.get() (using cache) - ("
-//					+ (0.000001 * (System.nanoTime() - time)) + "ms)");
+			LOGGER.log(Level.FINER, "NearestRoadCoordCache.get() (using cache) - ("
+					+ (0.000001 * (System.nanoTime() - time)) + "ms)");
 			return nearestCoord;
 		}
 		// If get here then the coord is not in the cache, agent not starting their journey from a house, search for
@@ -1676,8 +1699,8 @@ class NearestRoadCoordCache implements Serializable {
 		} // for nearRoads
 
 		if (nearestPoint != null) {
-//			LOGGER.log(Level.FINER, "NearestRoadCoordCache.get() (not using cache) - ("
-//					+ (0.000001 * (System.nanoTime() - time)) + "ms)");
+			LOGGER.log(Level.FINER, "NearestRoadCoordCache.get() (not using cache) - ("
+					+ (0.000001 * (System.nanoTime() - time)) + "ms)");
 			return nearestPoint;
 		}
 		/* IF HERE THEN ERROR, PRINT DEBUGGING INFO */
@@ -1710,8 +1733,8 @@ class NearestRoadCoordCache implements Serializable {
 			}
 			throw ex;
 		}
-//		LOGGER.log(Level.FINE, "... serialised NearestRoadCoordCache to " + this.serialisedLoc.getAbsolutePath()
-//				+ " in (" + 0.000001 * (System.nanoTime() - time) + "ms)");
+		LOGGER.log(Level.FINE, "... serialised NearestRoadCoordCache to " + this.serialisedLoc.getAbsolutePath()
+				+ " in (" + 0.000001 * (System.nanoTime() - time) + "ms)");
 	}
 
 	/**
@@ -1728,7 +1751,7 @@ class NearestRoadCoordCache implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static NearestRoadCoordCache getInstance(AgentSet<UserTurtle> buildingEnv, File buildingsFile,
+	public synchronized static NearestRoadCoordCache getInstance(Geography<IAgent> buildingEnv, File buildingsFile,
 			Geography<Road> roadEnv, File roadsFile, File serialisedLoc, GeometryFactory geomFac) throws Exception {
 		double time = System.nanoTime();
 		// See if there is a cache object on disk.
@@ -1748,11 +1771,11 @@ class NearestRoadCoordCache implements Serializable {
 				if (!buildingsFile.getAbsolutePath().equals(ncc.buildingsFile.getAbsolutePath())
 						|| !roadsFile.getAbsolutePath().equals(ncc.roadsFile.getAbsolutePath())
 						|| buildingsFile.lastModified() > ncc.createdTime || roadsFile.lastModified() > ncc.createdTime) {
-//					LOGGER.log(Level.FINE, "BuildingsOnRoadCache, found serialised object but it doesn't match the "
-//							+ "data (or could have different modification dates), will create a new cache.");
+					LOGGER.log(Level.FINE, "BuildingsOnRoadCache, found serialised object but it doesn't match the "
+							+ "data (or could have different modification dates), will create a new cache.");
 				} else {
-//					LOGGER.log(Level.FINER, "NearestRoadCoordCache, found serialised cache, returning it (in "
-//							+ 0.000001 * (System.nanoTime() - time) + "ms)");
+					LOGGER.log(Level.FINER, "NearestRoadCoordCache, found serialised cache, returning it (in "
+							+ 0.000001 * (System.nanoTime() - time) + "ms)");
 					return ncc;
 				}
 			} catch (IOException ex) {

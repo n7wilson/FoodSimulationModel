@@ -69,3 +69,23 @@ java.lang.ClassNotFoundException: foodsimulationmodel.context.SimBuilder
 	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:108)
 	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:116)
 	at foodsimulationmodel.relogo.environment.Main.main(Main.groovy:74)
+ERROR [main] 2013-08-22 11:18:44,949 saf.core.runtime.Boot - null
+java.lang.NullPointerException
+	at saf.core.runtime.Boot.init(Boot.java:79)
+	at saf.core.runtime.Boot.main(Boot.java:250)
+	at repast.simphony.runtime.RepastMain.main(RepastMain.java:43)
+ERROR [main] 2013-08-22 11:18:44,990 saf.core.runtime.Boot - null
+java.lang.NullPointerException
+	at saf.core.runtime.Boot.run(Boot.java:105)
+	at saf.core.runtime.Boot.main(Boot.java:251)
+	at repast.simphony.runtime.RepastMain.main(RepastMain.java:43)
+ERROR [main] 2013-08-22 11:24:57,042 saf.core.runtime.Boot - null
+java.lang.NullPointerException
+	at saf.core.runtime.Boot.init(Boot.java:79)
+	at saf.core.runtime.Boot.main(Boot.java:250)
+	at repast.simphony.runtime.RepastMain.main(RepastMain.java:43)
+ERROR [main] 2013-08-22 11:24:57,045 saf.core.runtime.Boot - null
+java.lang.NullPointerException
+	at saf.core.runtime.Boot.run(Boot.java:105)
+	at saf.core.runtime.Boot.main(Boot.java:251)
+	at repast.simphony.runtime.RepastMain.main(RepastMain.java:43)

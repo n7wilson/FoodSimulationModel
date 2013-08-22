@@ -43,7 +43,7 @@ import repast.simphony.space.graph.Network;
  */
 public class GISFunctions {
 
-//	private static Logger LOGGER = Logger.getLogger(Route.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Route.class.getName());
 
 	/**
 	 * Create the road network. Runs through the roads in the <code>roadGeography</code> and, for each one, will create
@@ -128,8 +128,8 @@ public class GISFunctions {
 			if (!roadNetwork.containsEdge(edge)) {
 				roadNetwork.addEdge(edge);
 			} else {
-//				LOGGER.severe("CityContext: buildRoadNetwork: for some reason this edge that has just been created "
-//						+ "already exists in the RoadNetwork!");
+				LOGGER.severe("CityContext: buildRoadNetwork: for some reason this edge that has just been created "
+						+ "already exists in the RoadNetwork!");
 			}
 
 		} // for road:
