@@ -28,6 +28,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.Node;
 import com.jme3.ui.Picture
+import com.vividsolutions.jts.geom.Coordinate
 import de.lessvoid.nifty.Nifty
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +47,9 @@ import repast.simphony.context.Context
 import repast.simphony.engine.schedule.AbstractAction;
 import repast.simphony.engine.schedule.Frequency;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import foodsimulationmodel.pathmapping.Junction
+import foodsimulationmodel.pathmapping.NetworkEdge
+import foodsimulationmodel.pathmapping.Scale;
 import foodsimulationmodel.relogo.agents.Consumer;
 import foodsimulationmodel.relogo.agents.Distributor
 import foodsimulationmodel.relogo.agents.Producer
@@ -60,12 +64,17 @@ import repast.simphony.relogo.Observer;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.space.graph.Network;
+import repast.simphony.space.graph.RepastEdge;
 
 public class Main extends SimpleApplication{
 	private String baseDir = "";
 	private static UserObserver ob;
 	public ArrayList<ArrayList<Spatial>> trackList = new ArrayList<ArrayList<Spatial>>();
 	private boolean newBuilding = false;
+	
+	public static Context<Junction> jc;
+	public static Network<Junction> rn;
 	
 	public static void main(String[] args){
 		File file = new File(args[0]); // the scenario dir
@@ -89,6 +98,22 @@ public class Main extends SimpleApplication{
 			Object next = itr.next();
 			if(next.getClass() == UserObserver.class){
 				ob = (UserObserver) next;}}
+		
+		jc = runner.getContext().getSubContext(GlobalVars.CONTEXT_NAMES.JUNCTION_CONTEXT);
+		rn = jc.getProjection(GlobalVars.CONTEXT_NAMES.ROAD_NETWORK);
+		
+		for (NetworkEdge<Junction> r : rn.getEdges()){
+			float rx = (float) r.getRoad().getCoords().x;
+			float ry = (float) r.getRoad().getCoords().y;
+			String rcor = r.getRoad().getCoords().toString();
+			System.out.println("x:"+rx+", y:"+ry+rcor);
+		}
+		
+		double rXmax = Scale.findCritPts(rn.getEdges(),true,true);
+		double rXmin = Scale.findCritPts(rn.getEdges(),false,true);
+		double rYmax = Scale.findCritPts(rn.getEdges(),true,false);
+		double rYmin = Scale.findCritPts(rn.getEdges(),false,false);
+		System.out.println("X - max:"+rXmax+", min:"+rXmin+"; Y - max:"+rYmax+", min:"+rYmin);
 		
 		ob.setup()
 		
@@ -116,11 +141,7 @@ public class Main extends SimpleApplication{
         setScene();
 		initialScene();
 		initCrossHairs();
-		hudSetup();
-		
- 
-	
-  
+		hudSetup();  
 	}
   
     @Override
@@ -157,6 +178,7 @@ public class Main extends SimpleApplication{
 		ArrayList<Spatial> producerList = new ArrayList<Spatial>();
 		ArrayList<Spatial> distributorList = new ArrayList<Spatial>();
 		ArrayList<Spatial> consumerList = new ArrayList<Spatial>();
+		float scale = 6.0;
 		
 		Spatial S;
 			   Node workNode = new Node("work");
@@ -165,7 +187,7 @@ public class Main extends SimpleApplication{
 				   S = assetManager.loadModel(baseDir + "Textures/building1.mesh.xml");
 				   S.scale(5f);
 				   S.rotate(0.0f, -3.0f, 0.0f);
-				   S.setLocalTranslation((Float)w.getXcor()*6,1.0f,(Float)w.getYcor()*6);
+				   S.setLocalTranslation((Float)w.getXcor()*scale,1.0f,(Float)w.getYcor()*scale);
 				   S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/workMaterial.j3m"));
 				   workNode.attachChild(S);
 				   workList.add(S);}
@@ -176,7 +198,7 @@ public class Main extends SimpleApplication{
 				   S = assetManager.loadModel(baseDir + "Textures/retailer1.mesh.xml");
 				   S.scale(5f);
 				   S.rotate(0.0f, -3.0f, 0.0f);
-				   S.setLocalTranslation((Float)r.getXcor()*6,1.0f,(Float)r.getYcor()*6);
+				   S.setLocalTranslation((Float)r.getXcor()*scale,1.0f,(Float)r.getYcor()*scale);
 				   S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/retMaterial.j3m"));
 				   retailerNode.attachChild(S);
 				   retailerList.add(S);}
@@ -187,7 +209,7 @@ public class Main extends SimpleApplication{
 				   S = assetManager.loadModel(baseDir + "Textures/producer.mesh.xml");
 				   S.scale(5f);
 				   S.rotate(0.0f, -3.0f, 0.0f);
-				   S.setLocalTranslation((Float)p.getXcor()*6,1.0f,(Float)p.getYcor()*6);
+				   S.setLocalTranslation((Float)p.getXcor()*scale,1.0f,(Float)p.getYcor()*scale);
 				   S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/proMaterial.j3m"));
 				   producerNode.attachChild(S);
 				   producerList.add(S);}
@@ -198,7 +220,7 @@ public class Main extends SimpleApplication{
 				   S = assetManager.loadModel(baseDir + "Textures/distributor1.mesh.xml");
 				   S.scale(5f);
 				   S.rotate(0.0f, -3.0f, 0.0f);
-				   S.setLocalTranslation((Float)d.getXcor()*6,1.0f,(Float)d.getYcor()*6);
+				   S.setLocalTranslation((Float)d.getXcor()*scale,1.0f,(Float)d.getYcor()*scale);
 				   S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/disMaterial.j3m"));
 				   distributorNode.attachChild(S);
 				   distributorList.add(S)}
@@ -209,8 +231,28 @@ public class Main extends SimpleApplication{
 				   S = assetManager.loadModel(baseDir + "Textures/agent007.mesh.xml");
 				   S.scale(5f);
 				   S.rotate(0.0f, -3.0f, 0.0f);
-				   S.setLocalTranslation((Float)c.getXcor()*6,1.0f,(Float)c.getYcor()*6);
+				   S.setLocalTranslation((Float)c.getXcor()*scale,1.0f,(Float)c.getYcor()*scale);
 				   S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/charMaterial.j3m"));
+				   consumerNode.attachChild(S);
+				   consumerList.add(S);}
+			   
+			   Node roadNode = new Node("road")
+			   rootNode.attachChild(roadNode)
+			   Iterable<RepastEdge<Junction>> rnLst = rn.getEdges();
+			   double rXmax = Scale.findCritPts(rnLst,true,true);
+			   double rXmin = Scale.findCritPts(rnLst,false,true);
+			   double rYmax = Scale.findCritPts(rnLst,true,false);
+			   double rYmin = Scale.findCritPts(rnLst,false,false);
+			   for(NetworkEdge<Junction> r: rnLst){
+				   Coordinate rCor = r.getRoad().getCoords();
+				   // [-16,16] range of all Repast agent coordinates
+				   double rx = Scale.corScale(rCor.x,rXmax,rXmin,(float)-16.0,(float)16.0);
+				   double ry = Scale.corScale(rCor.y,rYmax,rYmin,(float)-16.0,(float)16.0);
+				   S = assetManager.loadModel(baseDir + "Textures/roadtiles.mesh.xml");
+				   S.scale(5f);
+				   S.rotate(0.0f, -3.0f, 0.0f);
+				   S.setLocalTranslation((Float)rx*scale,1.0f,(Float)ry*scale);
+				   S.setMaterial((Material)assetManager.loadMaterial(baseDir + "Textures/roadtile.j3m"));
 				   consumerNode.attachChild(S);
 				   consumerList.add(S);}
 			   
@@ -377,6 +419,5 @@ public class Main extends SimpleApplication{
 		}}.build(nifty));
 		nifty.gotoScreen("hud")
 	}
-				
 	
 }

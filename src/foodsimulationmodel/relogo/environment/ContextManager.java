@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
@@ -48,8 +49,10 @@ import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 import repast.simphony.space.gis.SimpleAdder;
 import repast.simphony.space.graph.Network;
+import repast.simphony.space.graph.RepastEdge;
 import foodsimulationmodel.pathmapping.GISFunctions;
 import foodsimulationmodel.pathmapping.Junction;
+import foodsimulationmodel.pathmapping.NetworkEdge;
 import foodsimulationmodel.pathmapping.NetworkEdgeCreator;
 import foodsimulationmodel.pathmapping.Road;
 import foodsimulationmodel.pathmapping.SpatialIndexManager;
@@ -350,4 +353,6 @@ public class ContextManager implements ContextBuilder<Object> {
 		sched.executeEndActions();
 		//LOGGER.log(Level.SEVERE, "ContextManager has been told to stop by " + clazz.getName(), ex);
 	}
+
 }
+			
