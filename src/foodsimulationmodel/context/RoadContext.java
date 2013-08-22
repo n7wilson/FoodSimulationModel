@@ -18,10 +18,10 @@ along with RepastCity.  If not, see <http://www.gnu.org/licenses/>.
 
 package foodsimulationmodel.context;
 
-
-import repast.simphony.context.DefaultContext;
-import foodsimulationmodel.pathmapping.Road;
 import foodsimulationmodel.relogo.environment.GlobalVars;
+import foodsimulationmodel.pathmapping.Road;
+import repast.simphony.context.DefaultContext;
+
 
 
 public class RoadContext extends DefaultContext<Road> {
