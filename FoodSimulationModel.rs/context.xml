@@ -1,4 +1,4 @@
-<context id="mainContext" class="foodsimulationmodel.relogog.environment.ContextManager">
+<context id="mainContext" class="foodsimulationmodel.environment.ContextManager">
 	<context id="AgentContext">
 		<projection type="geography" id="AgentGeography"></projection></context>
 	<context id="RoadContext">

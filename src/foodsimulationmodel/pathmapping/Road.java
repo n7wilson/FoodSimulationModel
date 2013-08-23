@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import foodsimulationmodel.relogo.environment.GlobalVars;
+import foodsimulationmodel.environment.GlobalVars;
 import foodsimulationmodel.exceptions.DuplicateRoadException;
 import foodsimulationmodel.exceptions.NoIdentifierException;
 

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import repast.simphony.space.gis.Geography;
-import foodsimulationmodel.relogo.environment.GlobalVars;
+import foodsimulationmodel.environment.GlobalVars;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;

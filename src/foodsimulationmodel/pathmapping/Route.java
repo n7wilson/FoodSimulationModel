@@ -51,10 +51,10 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.ShortestPath;
-import foodsimulationmodel.relogo.agents.IAgent;
+import foodsimulationmodel.agents.IAgent;
+import foodsimulationmodel.environment.ContextManager;
+import foodsimulationmodel.environment.GlobalVars;
 import foodsimulationmodel.exceptions.RoutingException;
-import foodsimulationmodel.relogo.environment.ContextManager;
-import foodsimulationmodel.relogo.environment.GlobalVars;
 
 /**
  * Create routes around a GIS road network. The <code>setRoute</code> function actually finds the route and can be

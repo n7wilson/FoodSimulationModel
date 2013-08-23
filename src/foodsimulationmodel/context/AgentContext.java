@@ -19,8 +19,8 @@ along with RepastCity.  If not, see <http://www.gnu.org/licenses/>.
 package foodsimulationmodel.context;
 
 import repast.simphony.context.DefaultContext;
-import foodsimulationmodel.relogo.agents.IAgent;
-import foodsimulationmodel.relogo.environment.GlobalVars;
+import foodsimulationmodel.agents.IAgent;
+import foodsimulationmodel.environment.GlobalVars;
 
 public class AgentContext extends DefaultContext<IAgent>{
 	

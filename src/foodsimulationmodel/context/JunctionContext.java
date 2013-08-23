@@ -18,7 +18,7 @@ along with RepastCity.  If not, see <http://www.gnu.org/licenses/>.
 
 package foodsimulationmodel.context;
 
-import foodsimulationmodel.relogo.environment.GlobalVars;
+import foodsimulationmodel.environment.GlobalVars;
 import foodsimulationmodel.pathmapping.Junction;
 import repast.simphony.context.DefaultContext;
 
